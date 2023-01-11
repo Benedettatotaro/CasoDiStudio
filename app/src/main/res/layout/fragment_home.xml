@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    android:layout_marginBottom="70dp"
+    tools:context=".ingress.HomeFragment">
+
+    <TextView
+        android:layout_width="390dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/spiegazione"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:layout_marginBottom="190dp"
+        android:text="Benvenuto nella nostra app! Effettua il login o la \nregistrazione
+per salvare i tuoi dati\no entra come ospite per testare la nostra app"/>
+
+    <Button
+        android:id="@+id/loginBtn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spiegazione"
+        android:textAllCaps="false"
+        android:text="Login"
+        android:background="@drawable/edittextbackground"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"/>
+
+    <Button
+        android:id="@+id/singupBtn"
+        android:layout_below="@+id/loginBtn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Registrazione"
+        android:background="@drawable/edittextbackground"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="15dp"/>
+
+    <Button
+        android:id="@+id/hostBtn"
+        android:layout_below="@+id/singupBtn"
+        android:layout_width="150dp"
+        android:textAllCaps="false"
+        android:layout_height="wrap_content"
+        android:text="Ospite"
+        android:background="@drawable/edittextbackground"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
+
+    <!-- immagine trasparente così da far comparire
+     l'immagine dell'activity che sarà la stessa
+     per tutti i fragment d'ingresso-->
+
+
+
+</RelativeLayout>
