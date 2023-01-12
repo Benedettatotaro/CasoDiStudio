@@ -28,8 +28,8 @@ public class Character {
         width=characterStop.getWidth();
         height=characterStop.getHeight();
 
-        width*=(int) screenRatioX;  //non va bene
-        height*=(int) screenRatioY;  //non va bene
+        width*=(int) Resources.getSystem().getDisplayMetrics().density;  //non va bene
+        height*=(int) Resources.getSystem().getDisplayMetrics().density;  //non va bene
 
         characterStop=Bitmap.createScaledBitmap(characterStop,screenX,screenY,false);
 

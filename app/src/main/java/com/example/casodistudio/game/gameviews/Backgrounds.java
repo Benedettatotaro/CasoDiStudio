@@ -18,16 +18,16 @@ public class Backgrounds {
     Bitmap background; //oggetto che conterrà lo sfondo
 
     Backgrounds(Resources res,int screenX, int screenY, short flag){
-        background= BitmapFactory.decodeResource(res, R.drawable.background_museo);
+       background= BitmapFactory.decodeResource(res, R.drawable.background_museo_vero);
         switch (flag){
             case 0: //caricara il background del museo
-                background= BitmapFactory.decodeResource(res, R.drawable.background_museo);
+                //TO DO:background= BitmapFactory.decodeResource(res, R.drawable.background_museo);
                 break;
             case 1: //caricara il background della Luna
-                background=BitmapFactory.decodeResource(res, R.drawable.background_luna);
+                //TO DO:background=BitmapFactory.decodeResource(res, R.drawable.background_luna);
                 break;
             case 2: //caricara il background di Marte
-                background=BitmapFactory.decodeResource(res,R.drawable.background_marte);
+                //TO DO:background=BitmapFactory.decodeResource(res,R.drawable.background_marte);
                 break;
         }
         width=background.getWidth();

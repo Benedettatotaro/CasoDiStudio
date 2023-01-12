@@ -74,7 +74,8 @@ public class SingUpFragment extends Fragment {
                     toast.show();
 
                 }
-                /*else if(!Patterns.EMAIL_ADDRESS.matcher(emailtxt).matches()){
+                //funziona ma non si può inserire l'email nel db perché crasha
+                /*else if(!(Patterns.EMAIL_ADDRESS.matcher(emailtxt).matches())){
 
                     toast=Toast.makeText(getActivity(), "inserisci un email valida", Toast.LENGTH_SHORT);
                     toast.show();
@@ -115,11 +116,15 @@ public class SingUpFragment extends Fragment {
                                     toast.show();
 
                                     //e chiede all'utente di loggarsi caricando il fragment del login
-                                /*AppCompatActivity activity = (MainActivity) getActivity();
-                                FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.container, new LoginFragment());
-                                ft.addToBackStack(null);
-                                ft.commit();*/
+                                    /*AppCompatActivity activity = (MainActivity) getActivity();
+
+                                    toast = Toast.makeText(getActivity(), "Effettua il login", Toast.LENGTH_SHORT);
+                                    toast.show();
+
+                                    FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+                                    ft.replace(R.id.container, new LoginFragment());
+                                    ft.addToBackStack(null);
+                                    ft.commit();*/
                                 }
                             }
 

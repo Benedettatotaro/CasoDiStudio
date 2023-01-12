@@ -38,7 +38,7 @@ public class ViewLandscape extends SurfaceView implements Runnable{
 
         background=new Backgrounds(getResources(),screenX,screenY,flag);
         floor=new Floor(this,getResources(),flag,screenX,screenY);
-        character=new Character(this, getResources(),flag,screenY,screenX);
+        //character=new Character(this, getResources(),flag,screenY,screenX);
 
         paint=new Paint();
 
@@ -108,7 +108,7 @@ public class ViewLandscape extends SurfaceView implements Runnable{
             Canvas canvas=getHolder().lockCanvas(); //blocca il canva per poterlo usare
             canvas.drawBitmap(background.background,background.x,background.y,paint);
             canvas.drawBitmap(floor.floor,floor.x,floor.y,paint);
-            canvas.drawBitmap(character.characterStop,character.x,character.y,paint);
+            //canvas.drawBitmap(character.characterStop,character.x,character.y,paint);
             getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
         }
     }

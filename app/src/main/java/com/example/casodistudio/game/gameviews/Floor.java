@@ -16,9 +16,10 @@ public class Floor {
 
         this.view=view;
 
-        switch (flag){
+        floor= BitmapFactory.decodeResource(res, R.drawable.pavimento_museo);
+        /*switch (flag){
             case 0: //se il flag è zero carica il pavimento del museo
-                floor= BitmapFactory.decodeResource(res, R.drawable.ground_museo);
+                floor= BitmapFactory.decodeResource(res, R.drawable.pavimento_museo);
                 break;
             case 1: //se il flag è uno carica il pavimento della luna
                 floor= BitmapFactory.decodeResource(res, R.drawable.ground_luna);
@@ -26,15 +27,16 @@ public class Floor {
             case 2:  //se il flag è due carica il pavimento di marte
                 floor= BitmapFactory.decodeResource(res, R.drawable.ground_marte);
                 break;
-        }
+        }*/
 
         width=floor.getWidth();
         height=floor.getHeight();
 
-        width*=(int) Resources.getSystem().getDisplayMetrics().density;
-        height*=(int) Resources.getSystem().getDisplayMetrics().density;
+        float density=Resources.getSystem().getDisplayMetrics().density;
+        //width*=(int) Resources.getSystem().getDisplayMetrics().density;
+        //height*=(int) Resources.getSystem().getDisplayMetrics().density;
 
-        floor=Bitmap.createScaledBitmap(floor,width*2,height,false);  //crea una bitmap luga quanto il doppio del pavimemnto e alta scalata rispetto alla risoluzione dello schermo
+        floor=Bitmap.createScaledBitmap(floor,screenY*2,height,false);  //crea una bitmap luga quanto il doppio del pavimemnto e alta scalata rispetto alla risoluzione dello schermo
 
         //y-=height;
     }

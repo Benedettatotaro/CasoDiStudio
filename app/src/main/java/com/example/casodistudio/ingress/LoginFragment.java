@@ -69,8 +69,8 @@ public class LoginFragment extends Fragment {
                     toast.show();
 
                 }
-
-                /*else if(!Patterns.EMAIL_ADDRESS.matcher(emailtxt).matches()){  //se è stata inserita un email invalida
+                //funziona ma non si può inserire l'email nel db perché crasha
+                /*else if(!(Patterns.EMAIL_ADDRESS.matcher(emailtxt).matches())){  //se è stata inserita un email invalida
 
                     Toast toast=Toast.makeText(getActivity(), "inserisci un email valida", Toast.LENGTH_SHORT);
                     toast.show();  //stampa il messaggio di errore
