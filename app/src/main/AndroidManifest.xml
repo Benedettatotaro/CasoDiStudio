@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <!--chiede ad android il permesso di usare internet-->
-
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- chiede ad android il permesso di usare internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -17,7 +15,14 @@
         android:theme="@style/Theme.CasoDiStudio"
         tools:targetApi="31">
         <activity
-            android:name="com.example.casodistudio.game.GameActivityLandscape"
+            android:name=".HallActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".GameActivityLandscape"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data

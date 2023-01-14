@@ -1,20 +1,19 @@
-package com.example.casodistudio.game;
+package com.example.casodistudio;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import com.example.casodistudio.R;
-import com.example.casodistudio.game.gameviews.ViewLandscape;
+import com.example.casodistudio.game.gameviews.LViews.ViewMuseo;
 
 public class GameActivityLandscape extends AppCompatActivity {
 
-    private ViewLandscape viewLandscape;
+
+    private ViewMuseo viewMuseo;
+    private short flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +23,7 @@ public class GameActivityLandscape extends AppCompatActivity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        short flag=getIntent().getExtras().getShort("flag");
+         flag=getIntent().getExtras().getShort("flag");
         //imposta lo schermo in full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -33,22 +32,27 @@ public class GameActivityLandscape extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
 
         //e le passa al costruttore della view
-        viewLandscape=new ViewLandscape(this,point.x,point.y,flag);
+
+        switch (flag){
+            case 0: viewMuseo = new ViewMuseo(this,point.x,point.y);
+        }
+       // viewLandscape=new ViewLandscape(this,point.x,point.y);
+        //viewMuseo = new ViewMuseo(this,point.x,point.y);
 
         //setta la view del gioco
-        setContentView(viewLandscape);
+        setContentView(viewMuseo);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        viewLandscape.resume();
+        viewMuseo.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        viewLandscape.pause();
+        viewMuseo.pause();
     }
 }

@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.casodistudio.MainActivity;
-import com.example.casodistudio.game.GameActivityLandscape;
+import com.example.casodistudio.GameActivityLandscape;
 
 import com.example.casodistudio.R;
 
@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
             short flag=0;
             Bundle bundle=new Bundle(1);
             bundle.putShort("flag", flag); //setta il flag nel boundle uguale a 0 perchè sta chiamando il museo
-            Intent i = new Intent(getActivity(), com.example.casodistudio.game.GameActivityLandscape.class);
+            Intent i = new Intent(getActivity(), GameActivityLandscape.class);
             i.putExtras(bundle);
             getActivity().startActivity(i);
         });
