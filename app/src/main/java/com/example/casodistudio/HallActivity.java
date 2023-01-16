@@ -50,6 +50,7 @@ public class HallActivity extends AppCompatActivity {
     public void callTravel(short flag){
         Bundle bundle=new Bundle(1);
         bundle.putShort("flag", flag); //setta il flag nel boundle uguale a quello che gli arriva dalla view per capire se sta andando su marte o sulla luna
+
         Intent i = new Intent(HallActivity.this, GameActivityPortrait.class);
         i.putExtras(bundle);
         this.startActivity(i);

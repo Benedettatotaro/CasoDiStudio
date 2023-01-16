@@ -21,7 +21,8 @@ public class Enemy {
     public Bitmap enemy;
     public Bitmap gem;
     public boolean gemShot=false;
-    int xGem,yGem;
+    int xGem=0,yGem=0;
+    int widthGem,heightGem;
     Enemy(Resources res, int screenX){
         asteroid= BitmapFactory.decodeResource(res, R.drawable.asteroid);
         asteroid=Bitmap.createScaledBitmap(asteroid,asteroid.getWidth()/3,asteroid.getHeight()/3,false);
@@ -35,6 +36,9 @@ public class Enemy {
         gem=BitmapFactory.decodeResource(res,R.drawable.gem);
         gem=Bitmap.createScaledBitmap(gem,gem.getWidth()/2,gem.getHeight()/2,false);
 
+        widthGem=gem.getWidth();
+        heightGem=gem.getHeight();
+
         random=new Random();
         x=screenX+width;
     }
@@ -42,16 +46,17 @@ public class Enemy {
         return new Rect(x,y,x+width,y+height);
     }
     Rect getCollisionShapeGem(){  //definisco i margini di collisione dell'immagine
-        return new Rect(xGem,yGem,xGem+gem.getWidth(),y+gem.getHeight());
+        return new Rect(xGem,yGem,xGem+widthGem,y+heightGem);
     }
     public void getEnemy(){
 
-        if(random.nextInt(bound)==1){
+        if(random.nextInt(bound)==2||random.nextInt(bound)==4){
             height=alienShip.getHeight();
             width=alienShip.getWidth();
             enemy=alienShip;
+            isGem=false;
         }
-        else if(random.nextInt(bound)==2||random.nextInt(bound)==4){
+        else if(random.nextInt(bound)==1){
             isGem=true;
             height=asteroidGem.getHeight();
             width=asteroidGem.getWidth();
@@ -61,6 +66,7 @@ public class Enemy {
             height=asteroid.getHeight();
             width=asteroid.getWidth();
             enemy=asteroid;
+            isGem=false;
         }
 
     }

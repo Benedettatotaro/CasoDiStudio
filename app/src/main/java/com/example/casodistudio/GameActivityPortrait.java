@@ -49,6 +49,12 @@ public class GameActivityPortrait extends AppCompatActivity {
         viewTravel.pause();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
     public void callManager(short flag){
         Bundle bundle=new Bundle(1);
         bundle.putShort("flag", flag); //setta il flag nel boundle uguale a 0 perchè sta chiamando il museo
