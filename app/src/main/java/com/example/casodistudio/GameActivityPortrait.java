@@ -2,26 +2,25 @@ package com.example.casodistudio;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.casodistudio.game.gameviews.LViews.ViewMuseum;
-
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-public class HallActivity extends AppCompatActivity {
+import com.example.casodistudio.game.gameviews.ViewTravel;
 
-    private ViewMuseum viewMuseum;
+public class GameActivityPortrait extends AppCompatActivity {
+
     private short flag;
+    private ViewTravel viewTravel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //imposta l'orientamento in orizzontale come obbligatorio
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
+        flag=getIntent().getExtras().getShort("flag");
         //imposta lo schermo in full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -30,34 +29,30 @@ public class HallActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
 
         //e le passa al costruttore della view
-        viewMuseum = new ViewMuseum(this,point.x,point.y);
+
+        viewTravel = new ViewTravel(this,flag,point.y,point.x);
 
         //setta la view del gioco
-        setContentView(viewMuseum);
+
+        setContentView(viewTravel);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        viewMuseum.resume();
+        viewTravel.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        viewMuseum.pause();
+        viewTravel.pause();
     }
-    public void callTravel(short flag){
-        Bundle bundle=new Bundle(1);
-        bundle.putShort("flag", flag); //setta il flag nel boundle uguale a quello che gli arriva dalla view per capire se sta andando su marte o sulla luna
-        Intent i = new Intent(HallActivity.this, GameActivityPortrait.class);
-        i.putExtras(bundle);
-        this.startActivity(i);
-    }
+
     public void callManager(short flag){
         Bundle bundle=new Bundle(1);
         bundle.putShort("flag", flag); //setta il flag nel boundle uguale a 0 perchè sta chiamando il museo
-        Intent i = new Intent(HallActivity.this, ManagerActivity.class);
+        Intent i = new Intent(GameActivityPortrait.this, ManagerActivity.class);
         i.putExtras(bundle);
         this.startActivity(i);
     }

@@ -88,11 +88,8 @@ public class LoginFragment extends Fragment {
                                     final String passworddb = snapshot.child(emailtxt).child("password").getValue(String.class);
                                     if (passworddb.equals(passwordtxt)) {  //e controlla se la password inserita dall'utente è uguale a quella presente nel db
                                         Toast.makeText(getActivity(), "login avvenuto con successo", Toast.LENGTH_SHORT).show();
-
-                                        short flag = 0;
-                                        Bundle bundle = new Bundle(1); //setto il boundle per caricare la view del museo
-                                        //visto che il login è avvenuto con successo parte l'activity landscape per il museo
-                                        startActivity(new Intent(getActivity(), GameActivityLandscape.class).putExtra("flag", flag)); //apre l'activity landscape
+                                        //visto che il login è avvenuto con successo parte l'activity hall per il museo
+                                        startActivity(new Intent(getActivity(), HallActivity.class); //apre l'activity landscape
                                         getActivity().finish(); //e chiude quella in cui è contenuto il fragment
 
                                     } else {

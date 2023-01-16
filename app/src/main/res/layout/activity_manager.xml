@@ -4,6 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HallActivity">
+    tools:context=".ManagerActivity">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/container_manager">
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

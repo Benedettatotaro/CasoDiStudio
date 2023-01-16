@@ -7,12 +7,11 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import com.example.casodistudio.game.gameviews.LViews.ViewMuseo;
+import com.example.casodistudio.game.gameviews.LViews.ViewMuseum;
 
 public class GameActivityLandscape extends AppCompatActivity {
 
-
-    private ViewMuseo viewMuseo;
+    private ViewMuseum viewMuseo;  //TO DO: CAMBIARE IN VIEW MARTE E LUNA E FARE IL SET CONTENT VIEW
     private short flag;
 
     @Override
@@ -34,7 +33,7 @@ public class GameActivityLandscape extends AppCompatActivity {
         //e le passa al costruttore della view
 
         switch (flag){
-            case 0: viewMuseo = new ViewMuseo(this,point.x,point.y);
+            //case 0: viewMuseo = new ViewMuseo(this,point.x,point.y);
         }
        // viewLandscape=new ViewLandscape(this,point.x,point.y);
         //viewMuseo = new ViewMuseo(this,point.x,point.y);
@@ -55,4 +54,5 @@ public class GameActivityLandscape extends AppCompatActivity {
         super.onPause();
         viewMuseo.pause();
     }
+
 }
