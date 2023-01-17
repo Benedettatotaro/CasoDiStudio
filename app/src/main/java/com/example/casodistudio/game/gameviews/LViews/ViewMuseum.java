@@ -2,6 +2,7 @@ package com.example.casodistudio.game.gameviews.LViews;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -127,8 +128,11 @@ public class ViewMuseum extends SurfaceView implements Runnable {
             canvas.drawBitmap(apollo11,200*(int) screenRatioX,0,paint);
             canvas.drawBitmap(getCharacter(),getX(),screenY-floor.getHeight()-character.getHeight(),paint); //screenY-floor.getHeight()-character.getHeight()
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
-            if(isSwitching){
-                canvas.drawBitmap(interfaceBackground,0,0,paint);
+            if(isSwitching){  //se sta passando all'activity portrait chiama il fragment con la storia
+                short c=0;    //RIVEDERE
+                getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
+                hallactivity.callManager(c,(short)0);
+                return;
             }
             getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
         }
@@ -146,6 +150,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
+            hallactivity.finish();
             e.printStackTrace();
         }
 
@@ -165,6 +170,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         try{
             thread.join();
         }catch (InterruptedException e){
+            hallactivity.finish();
             e.printStackTrace();
         }
 
@@ -178,16 +184,16 @@ public class ViewMuseum extends SurfaceView implements Runnable {
             case MotionEvent.ACTION_DOWN:
                 if(event.getX()>screenX-pause.getWidth()-10*screenRatioX&&event.getY()<10*screenRatioX+pause.getHeight()){
                     //se il tocco avviene nel quadrato in cui si trova il bottone di pausa
-                    short flag=0;
-                    hallactivity.callManager(flag);
+                    short flag=0,flagActivity=1;
+                    hallactivity.callManager(flag,flagActivity);
                     //activityLandscape.callPauseFragment(); dovrebbe chiamare il fragment di pausa del gioco ma non so se si possa fare
                 }
                if(event.getX()>200*(int) screenRatioX&&event.getX()<200*(int) screenRatioX+apollo11.getWidth()&&event.getY()>0&&event.getY()<apollo11.getHeight()){
                    if(!isEndTravelToMoon){ //se non si è ancora completati il viaggio verso la luna parte direttamente l'activity portrait
                        short c=0;
-                       //isSwitching=true;  //DA RIVEDERE PERCHE'SE L'UTENTE CLICCA INDIETRO SI BLOCCA
-                       //sleep(4000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
-                       //isSwitching=false;
+                       isSwitching=true;  //RIVEDERE
+                       sleep(4000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
+                       isSwitching=false;
                        hallactivity.callTravel(c); //passa 0 come flag perché sta andando verso la luna
                        //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
                    }

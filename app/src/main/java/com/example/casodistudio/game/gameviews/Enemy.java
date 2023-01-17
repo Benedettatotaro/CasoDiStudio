@@ -46,17 +46,18 @@ public class Enemy {
         return new Rect(x,y,x+width,y+height);
     }
     Rect getCollisionShapeGem(){  //definisco i margini di collisione dell'immagine
-        return new Rect(xGem,yGem,xGem+widthGem,y+heightGem);
+        return new Rect(xGem,yGem,xGem+widthGem,yGem+heightGem);
     }
     public void getEnemy(){
 
-        if(random.nextInt(bound)==2||random.nextInt(bound)==4){
+        int r=random.nextInt(bound);
+        if(r==2||r==4){
             height=alienShip.getHeight();
             width=alienShip.getWidth();
             enemy=alienShip;
             isGem=false;
         }
-        else if(random.nextInt(bound)==1){
+        else if(r==1){
             isGem=true;
             height=asteroidGem.getHeight();
             width=asteroidGem.getWidth();

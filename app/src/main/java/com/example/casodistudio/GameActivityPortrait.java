@@ -52,12 +52,13 @@ public class GameActivityPortrait extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        viewTravel.pause();
     }
 
-    public void callManager(short flag){
-        Bundle bundle=new Bundle(1);
+    public void callManager(short flag, short flagActivity){
+        Bundle bundle=new Bundle(2);
         bundle.putShort("flag", flag); //setta il flag nel boundle uguale a 0 perchè sta chiamando il museo
+        bundle.putShort("flagActivity",flagActivity);
         Intent i = new Intent(GameActivityPortrait.this, ManagerActivity.class);
         i.putExtras(bundle);
         this.startActivity(i);

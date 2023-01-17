@@ -178,6 +178,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                 canvas.drawText("Hai perso!", xPos,yPos,textPaint);
                 getHolder().unlockCanvasAndPost(canvas);
                 waitBeforeExiting();
+                return;
             }
             getHolder().unlockCanvasAndPost(canvas);
         }
@@ -186,7 +187,6 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     private void waitBeforeExiting(){
         try {
             Thread.sleep(3000);
-            pause();
             gameActivityPortrait.startActivity(new Intent(gameActivityPortrait, HallActivity.class));
             gameActivityPortrait.finish();
         } catch (InterruptedException e) {
@@ -261,7 +261,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                     enemy.yGem+=enemy.speed;
                     if(Rect.intersects(enemy.getCollisionShapeGem(),getCollisionShape())){
                         gemCounter++;
-                        enemy.xGem+=screenY; //fa scomparire la gemma
+                        enemy.yGem+=screenY; //fa scomparire la gemma
                     }
                 }
                 else{  //quando la gemma scompare dallo schermo la variabile torna falsa così da non farla disegnare più
@@ -330,8 +330,8 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             case MotionEvent.ACTION_DOWN:
                 if(event.getX()>screenX-pause.getWidth()-10*screenRatioX&&event.getY()<10*screenRatioX+pause.getHeight()){
                     //se il tocco avviene nel quadrato in cui si trova il bottone di pausa
-                    short flag=0;
-                    gameActivityPortrait.callManager(flag);
+                    short flag=0,flagActivity=0;
+                    gameActivityPortrait.callManager(flag,flagActivity);
                     //activityLandscape.callPauseFragment(); dovrebbe chiamare il fragment di pausa del gioco ma non so se si possa fare
                 }
                 isPressed=true;
