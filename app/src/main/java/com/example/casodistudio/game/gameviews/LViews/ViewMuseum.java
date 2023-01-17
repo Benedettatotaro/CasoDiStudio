@@ -1,4 +1,5 @@
 package com.example.casodistudio.game.gameviews.LViews;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +24,6 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     private Bitmap museum_background = BitmapFactory.decodeResource(getResources(), R.drawable.background_museo);
     private Bitmap floor;
     private Bitmap pause,apollo11,roverMars;
-    private Toast toast;
     private int width,height;
     private int widthF,heightF;// altezza e lunghezza del pavimento
     public int x=0;
@@ -42,28 +42,34 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     boolean wasMirroredLeft=false,wasMirroredRight=true;
     boolean isSwitching;
     boolean isEndFirstLevel=false;
-    boolean isEndTravelToMars=false, isEndTravelToMoon=false;
+    boolean isEndSecondLevel=false;
     private Bitmap interfaceBackground;
-
+    private SharedPreferences prefs;
     private float charX, charY; // Dove viene spawnato il personaggio
-
-
+    private int moonGem;
     Rect rectGround;
 
 
     public ViewMuseum(HallActivity activity, int screenX, int screenY) {
         super(activity);
 
-        //super.background = new Backgrounds(getResources(),super.screenX,super.screenY);
+        prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE);
+
+        moonGem=prefs.getInt("moonGem",0);
+
+        if(moonGem<50&&!prefs.getBoolean("moonFinished",false)){
+            isEndFirstLevel=false;
+        }
+        else{
+            isEndFirstLevel=true;
+        }
+
         this.hallactivity=activity;
         this.screenX=screenX;
         this.screenY=screenY;
         screenRatioX=1920f/screenX;
         screenRatioY=1080F/screenY;
         paint=new Paint();
-        //rectBackground = new Rect(0,0,screenX,screenY);
-
-
 
         width = museum_background.getWidth();
         height = museum_background.getHeight();
@@ -113,9 +119,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
         width*=(int) Resources.getSystem().getDisplayMetrics().density;
         height*=(int) Resources.getSystem().getDisplayMetrics().density;
-        //floor = Bitmap.createScaledBitmap(floor,widthF,heightF,false); //serve solo per allungare il pavimento
 
-       // character = Bitmap.createScaledBitmap(character,character.getWidth()/8, character.getHeight()/8,false);
         charY= screenY - floor.getHeight() - character.getHeight();
         charX = 60;
         rectGround = new Rect(0,screenX-floor.getHeight(),screenX, screenY);
@@ -140,7 +144,10 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 int yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;
                 textPaint.setColor(Color.WHITE);
                 textPaint.setTextSize(30);
-                String message="ciao mi chiamo Hirooki e sono appassionato di astronomia. Oggi sono in visita al museo della Nasa di Milano. Vieni con me a scoprire le avventure che si celano nello spazio!";
+                String message="Durante gli anni della guerra fredda, tra stati uniti e " +  //da aggiustare FA SCHIFO!!!!
+                        "unione sovietica uno dei tanti obiettivi contesi era il primo viaggio con equipaggio verso la Luna. " +
+                        "Il giorno 20 luglio 1969 tre astronauti statunitensi sono partiti per la missione spaziale Apollo 11 per poi " +
+                        "atterrare sul suolo lunare il giorno dopo. Aiuta la navicella a raggiungere la luna come l’equipaggio fece quel giorno.";
                 StaticLayout.Builder builder=StaticLayout.Builder.obtain(message,0,message.length(), textPaint,500)
                         .setAlignment(Layout.Alignment.ALIGN_NORMAL);
                 StaticLayout staticLayout=builder.build();
@@ -148,10 +155,9 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 canvas.translate(xPos-getPaddingLeft(), yPos-getPaddingTop()-staticLayout.getHeight());
                 staticLayout.draw(canvas);
                 canvas.restore();
-                //isSwitching=false;
-                //sleep(10000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
-                hallactivity.callTravel(c); //passa 0 come flag perché sta andando verso la luna
                 getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
+                sleep(10000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
+                hallactivity.callTravel(c); //passa 0 come flag perché sta andando verso la luna
                 return;
             }
             getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
@@ -209,29 +215,22 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                     //activityLandscape.callPauseFragment(); dovrebbe chiamare il fragment di pausa del gioco ma non so se si possa fare
                 }
                if(event.getX()>200*(int) screenRatioX&&event.getX()<200*(int) screenRatioX+apollo11.getWidth()&&event.getY()>0&&event.getY()<apollo11.getHeight()){
-                   if(!isEndTravelToMoon){ //se non si è ancora completati il viaggio verso la luna parte direttamente l'activity portrait
-
-                       isSwitching=true;
-
-                       //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
-                   }
-                   else{
-                       //TO DO: IMPOSTARE LA SCELTA TRA IL VIAGGIO VERSO LA LUNA E ARRIVARE DIRETTAMENTE SULLA LUNA
-                   }
-
+                   isSwitching=true;
+                   //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
                 }
                if((event.getX()>screenX-roverMars.getWidth()-200*screenRatioX)&&(event.getX()<screenX-200*screenRatioX)&&event.getY()>screenY-floor.getHeight()-roverMars.getHeight()+5&&event.getY()<screenY-floor.getHeight()+5){ //
                    if(!isEndFirstLevel){ //se il primo livello non è ancora finito compare la scritta che il livello è bloccato
                        Toast.makeText(hallactivity, "Livello bloccato", Toast.LENGTH_SHORT).show();
                    }
                    else{
-                       if(!isEndTravelToMars){
-                           short c=1; //passa 1 come flag perché sta andando verso Marte
-                           hallactivity.callTravel(c);
+                       if(isEndFirstLevel&&moonGem<50){
+                           Toast.makeText(hallactivity, "Livello bloccato", Toast.LENGTH_SHORT).show();
+                           Toast.makeText(hallactivity, "Raccogli 50 gemme per sbloccarlo", Toast.LENGTH_SHORT).show();
                        }
-                       else{
-                           //TO DO: IMPOSTARE LA SCELTA TRA IL VIAGGIO VERSO LA MARTE E ARRIVARE DIRETTAMENTE SU MARTE
-                       }
+                       short c=1; //passa 1 come flag perché sta andando verso Marte
+                       hallactivity.callTravel(c);
+
+                           //TO DO: IMPOSTARE IL VIAGGIO VERSO LA MARTE
                    }
 
                }

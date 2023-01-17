@@ -43,7 +43,7 @@ public class SingUpFragment extends Fragment {
     private EditText conPassword;
     private Button singupBtn;
 
-    DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReferenceFromUrl("https://loginregister-d0f2d-default-rtdb.firebaseio.com/");
+    DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReferenceFromUrl("https://casodistudio-dcae5-default-rtdb.firebaseio.com/");
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -115,11 +115,11 @@ public class SingUpFragment extends Fragment {
                                     toast.show();
 
                                     //e chiede all'utente di loggarsi caricando il fragment del login
-                                /*AppCompatActivity activity = (MainActivity) getActivity();
+                                AppCompatActivity activity = (MainActivity) getActivity();
                                 FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
                                 ft.replace(R.id.container, new LoginFragment());
                                 ft.addToBackStack(null);
-                                ft.commit();*/
+                                ft.commit();
                                 }
                             }
 

@@ -38,7 +38,7 @@ public class PauseFragment extends Fragment {
             public void onClick(View view) {
                 if(flag==0){   //la pausa è stata chiamata dall'activity viaggio
                     Intent i=new Intent(getActivity(),HallActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    //i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                 }
                 else if(flag==1){  //la pausa è stata chiamata dall'activity museo

@@ -5,6 +5,7 @@ import static com.example.casodistudio.game.gameviews.LViews.ViewMuseum.screenRa
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -22,6 +23,8 @@ import android.widget.Toast;
 import com.example.casodistudio.GameActivityPortrait;
 import com.example.casodistudio.HallActivity;
 import com.example.casodistudio.R;
+import com.example.casodistudio.game.gameviews.PViewClass.Background;
+import com.example.casodistudio.game.gameviews.PViewClass.Ship;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,16 +35,11 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     private Thread thread;
     private boolean isPlaying=true;
     private GameActivityPortrait gameActivityPortrait;
-    private Bitmap background1, background2;
-    private int xBackground1=0,yBackground1=0,xBackground2=0,yBackground2;
-    private int xShip,yShip;
-    private Bitmap ship;
     private Paint paint;
     private SensorManager sManager;
     private int screenX,screenY;
     private Sensor accelerometer;
     private boolean isPressed=false;
-    private Bitmap shipShoot;
     private Random random;
     private List<Bullet> bullets;
     private List<Enemy> enemies;
@@ -51,19 +49,20 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     private int gemCounter=0;
     private Paint text;
     private int enemyCounter;
-    private boolean isPowerup=false,isPoweringup=false;
-    private Bitmap shipPowerup,shipShootPowerup;
-    private Bitmap powerup;
-    private int xPoweup,yPowerup,speedPowerup=20;
+    private Background background_1,background_2;
+    private Ship ship;
+    private SharedPreferences prefs;
 
     public ViewTravel(GameActivityPortrait activity, short flag,int screenY,int screenX) {
 
         super(activity);
+
         this.gameActivityPortrait=activity;
         this.screenX=screenX;
         this.screenY=screenY;
 
-        //timerEnemies=new TimerEnemies(ViewTravel.this);
+        prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE);
+
         paint=new Paint();
 
         text=new Paint();
@@ -71,36 +70,16 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         text.setTextSize(50);
         text.setTextAlign(Paint.Align.CENTER);
 
-        background1= BitmapFactory.decodeResource(getResources(), R.drawable.travel_background);
-        background2= BitmapFactory.decodeResource(getResources(), R.drawable.travel_background);
+        background_1=new Background(getResources(),screenX,screenY);
+        background_2=new Background(getResources(),screenX,screenY);
 
-        background1=Bitmap.createScaledBitmap(background1,screenX,screenY,false);
-        background2=Bitmap.createScaledBitmap(background2,screenX,screenY,false);
-
-        powerup=BitmapFactory.decodeResource(getResources(),R.drawable.powerup);
-        powerup=Bitmap.createScaledBitmap(powerup,powerup.getWidth()/2,powerup.getHeight()/2,false);
 
         pause=BitmapFactory.decodeResource(getResources(),R.drawable.pause);
         pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/45,pause.getHeight()/45,false);
 
-        yBackground2=-screenY;  //inizializza il secondo background sopra il primo
+        background_2.y=-screenY;  //inizializza il secondo background sopra il primo
 
-        if(flag==0){
-            ship=BitmapFactory.decodeResource(getResources(),R.drawable.ship_astronaut);
-            shipShoot=BitmapFactory.decodeResource(getResources(),R.drawable.ship_shoot);
-            //shipPowerup=BitmapFactory.decodeResource(getResources(),R.drawable.ship_powerup);
-            //shipShootPowerup=BitmapFactory.decodeResource(getResources(),R.drawable.ship_shoot_powerup);
-        }
-        else if(flag==1){
-            //TO DO: CARICARE LA BITMAP DELLA NAVICELLA CON IL ROVER
-        }
-
-        ship=Bitmap.createScaledBitmap(ship,ship.getWidth()/7,ship.getHeight()/7,false);
-        shipShoot=Bitmap.createScaledBitmap(shipShoot,shipShoot.getWidth()/7,shipShoot.getHeight()/7,false);
-        //shipPowerup=Bitmap.createScaledBitmap(shipPowerup,shipPowerup.getWidth()/2,shipPowerup.getHeight()/2,false);
-        //shipShootPowerup=Bitmap.createScaledBitmap(shipShootPowerup,shipShootPowerup.getWidth()/7,shipShootPowerup.getHeight()/7,false);
-        xShip=(screenX/2)-(ship.getWidth()/2);
-        yShip=(int)(screenY-10*screenRatioY-ship.getHeight());
+        ship=new Ship(getResources(),screenX,screenY,flag);
 
         bullets=new ArrayList<>();
 
@@ -116,12 +95,19 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
     @Override
     public void run() {
-        while (isPlaying&&gameCounter<2166){   //il gioco si ferma all'incirca dopo 1 minuto e mezzo di gioco
-            //timer.schedule(new TimerEnemies(ViewTravel.this),0,20000);
-            update();
-            draw();
-            sleep(36);
-            gameCounter++;
+        if(gameCounter<2166){
+            while (isPlaying){   //il gioco si ferma all'incirca dopo 1 minuto e mezzo di gioco
+                update();
+                draw();
+                sleep(36);
+                gameCounter++;
+            }
+        }
+        else{  //se il gioco finisce salva i dati delle gemme
+            SharedPreferences.Editor editor= prefs.edit();
+            editor.putInt("moonGem",gemCounter);
+            editor.putBoolean("moonFinished",true); //imposta che il livello della luna è finito
+            editor.apply();
         }
     }
 
@@ -148,12 +134,12 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     }
 
     public void generatePowerup(){
-        if(!isPowerup){  //se non ci sono altri power up sullo schermo
+        if(!ship.isPowerup){  //se non ci sono altri power up sullo schermo
             int i=random.nextInt(10)+1;
             if(i==5){
-                isPowerup=true; //se la random genera 5 in un range da 1 a 10 genera il powerup
-                yPowerup=0;
-                xPoweup=random.nextInt(screenX-powerup.getWidth());
+                ship.isPowerup=true; //se la random genera 5 in un range da 1 a 10 genera il powerup
+                ship.yPowerup=0;
+                ship.xPoweup=random.nextInt(screenX-ship.powerup.getWidth());
             }
         }
     }
@@ -161,10 +147,10 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     private void draw(){
         if(getHolder().getSurface().isValid()){
             Canvas canvas=getHolder().lockCanvas();
-            canvas.drawBitmap(background1,xBackground1,yBackground1,paint);
-            canvas.drawBitmap(background2,xBackground2,yBackground2,paint);
-            if(isPowerup){
-                canvas.drawBitmap(powerup,0,0,paint);
+            canvas.drawBitmap(background_1.background,background_1.x,background_1.y,paint);
+            canvas.drawBitmap(background_2.background,background_2.x,background_2.y,paint);
+            if(ship.isPowerup){
+                canvas.drawBitmap(ship.powerup,ship.xPoweup,ship.yPowerup,paint);
             }
             canvas.drawText(""+gemCounter,canvas.getWidth()/2,30*screenRatioY,text);
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
@@ -174,7 +160,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                     canvas.drawBitmap(enemy.gem,enemy.xGem,enemy.yGem,paint);
                 }
             }
-            canvas.drawBitmap(getShip(),xShip,yShip,paint);
+            canvas.drawBitmap(ship.getShip(),ship.xShip,ship.yShip,paint);
             for(Bullet bullet:bullets){
                 canvas.drawBitmap(bullet.bullet,bullet.x,bullet.y,paint);
             }
@@ -210,13 +196,13 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     }
 
     private void update(){
-        yBackground1+=10*screenRatioY;
-        yBackground2+=10*screenRatioY;
-        if(yBackground1>screenY){ //se il background è sceso fuori dallo schermo
-            yBackground1=-screenY;
+        background_1.y+=10*screenRatioY;
+        background_2.y+=10*screenRatioY;
+        if(background_1.y>screenY){ //se il background è sceso fuori dallo schermo
+            background_1.y=-screenY;
         }
-        if(yBackground2>screenY){ //se il background è sceso fuori dallo schermo
-            yBackground2=-screenY;
+        if(background_2.y>screenY){ //se il background è sceso fuori dallo schermo
+            background_2.y=-screenY;
         }
 
         if(gameCounter%100==0){
@@ -252,16 +238,26 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             bullets.remove(bullet);
         }
 
-        if(isPowerup&&yPowerup<=screenY){   //controllo per la velocità casuale del power up
-            yPowerup+=speedPowerup;
+        if(ship.isPowerup&&ship.yPowerup<=screenY){   //controllo per la velocità casuale del power up
+            ship.yPowerup+=ship.speedPowerup;
             int bound=(int)(30*screenRatioY);
-            speedPowerup=random.nextInt(bound);
-            if(speedPowerup<10*screenRatioY){
-                speedPowerup=(int) (10*screenRatioY);
+            ship.speedPowerup=random.nextInt(bound);
+            if(ship.speedPowerup<10*screenRatioY){
+                ship.speedPowerup=(int) (10*screenRatioY);
+            }
+            if(Rect.intersects(ship.getCollisionShapePowerUp(),ship.getCollisionShape())){  //se la navicella colpisce il powerup
+                ship.isPoweringup=true; //cambia la bitmap della navicella
+                ship.yPowerup+=screenY;
+                ship.counterPouwerup=gameCounter; //inizializza il contatore del powerup
             }
         }
-        else if(yPowerup>=screenY){
-            isPowerup=false;
+
+        if(ship.isPoweringup&&gameCounter>=ship.counterPouwerup+200){  //se il contatore di gioco incrementa di 833 cioè all'incirca 30 secondi
+            ship.isPoweringup=false;  //termina il power up
+        }
+
+        else if(ship.isPowerup&&ship.yPowerup>=screenY){  //se il power up esce dallo schermo la variabile cambia
+            ship.isPowerup=false;
         }
 
         if(!enemies.isEmpty()){
@@ -275,17 +271,20 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                     }
                 }
                 else{
-                    //enemy.y=0; //l'asse delle y rimane lo stesso da cui spaunare
-                    //enemy.x=random.nextInt(screenX-enemy.width); //l'asse delle x viene scelto randomicamente
                     enemiesTrash.add(enemy);
                 }
-                if(Rect.intersects(enemy.getCollisionShape(),getCollisionShape())){
-                    isGameOver=true;
-                    return;
+                if(Rect.intersects(enemy.getCollisionShape(),ship.getCollisionShape())){
+                    if(ship.isPoweringup){  //se è il powerup non perdi
+                        enemy.y-=screenY+500; //l'asteroide si sposta di 500+screenY
+                    }
+                    else{
+                        isGameOver=true;
+                        return;
+                    }
                 }
                 if(enemy.isGem&&enemy.gemShot&&enemy.yGem<=screenY){ //se l'elemento dell'array list era un asteroide con gemma ed è stato colpito quindi c'è la gemma sullo schermo e non è ancora scomparsa
                     enemy.yGem+=enemy.speed;
-                    if(Rect.intersects(enemy.getCollisionShapeGem(),getCollisionShape())){
+                    if(Rect.intersects(enemy.getCollisionShapeGem(),ship.getCollisionShape())){
                         gemCounter++;
                         enemy.yGem+=screenY; //fa scomparire la gemma
                     }
@@ -302,10 +301,6 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                 enemies.remove(enemy);
             }
         }
-    }
-
-    Rect getCollisionShape(){   //definisco i margini di collisione dell'immagine
-        return new Rect(xShip,yShip,xShip+getShip().getWidth(),yShip+getShip().getHeight());
     }
 
     public void resume(){
@@ -328,12 +323,12 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if(sensorEvent.sensor.getType()==Sensor.TYPE_ACCELEROMETER){  //se l'input proviene dall'accellerometro
-            xShip=(int)(xShip-sensorEvent.values[0]-sensorEvent.values[0]);
-            if(xShip+sensorEvent.values[0]+ship.getWidth()>screenX-10*screenRatioX){  //la navicella si sposta verso destra se rimane in questo range
-                xShip=(int)(screenX-10*screenRatioX-ship.getWidth());
+            ship.xShip=(int)(ship.xShip-sensorEvent.values[0]-sensorEvent.values[0]);
+            if(ship.xShip+sensorEvent.values[0]+ship.getShip().getWidth()>screenX-10*screenRatioX){  //la navicella si sposta verso destra se rimane in questo range
+                ship.xShip=(int)(screenX-10*screenRatioX-ship.getShip().getWidth());
             }
-            else if(xShip-sensorEvent.values[0]<0){ //la navicella si sposta verso sinistra se rimane in questo range
-                xShip=(int)(10*screenRatioX);
+            else if(ship.xShip-sensorEvent.values[0]<0){ //la navicella si sposta verso sinistra se rimane in questo range
+                ship.xShip=(int)(10*screenRatioX);
             }
         }
     }
@@ -369,24 +364,11 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         return true;
     }
 
-    private Bitmap getShip(){
-        if(isPoweringup){
-            if(isPressed){
-                return shipShootPowerup;
-            }
-            return shipPowerup;
-        }
-        if(isPressed){
-            return shipShoot;
-        }
-        return ship;
-    }
-
     public void setBullet(){
 
         Bullet bullet=new Bullet(getResources());
-        bullet.x=xShip+shipShoot.getWidth()/2-bullet.bullet.getWidth()/2;
-        bullet.y=screenY-shipShoot.getHeight()-bullet.bullet.getHeight();
+        bullet.x=ship.xShip+ship.shipShoot.getWidth()/2-bullet.bullet.getWidth()/2;
+        bullet.y=screenY-ship.shipShoot.getHeight()-bullet.bullet.getHeight();
         bullets.add(bullet);
 
     }
