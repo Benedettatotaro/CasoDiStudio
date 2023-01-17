@@ -26,8 +26,6 @@ import com.example.casodistudio.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ViewTravel extends SurfaceView implements Runnable, SensorEventListener {
 
@@ -45,16 +43,18 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     private boolean isPressed=false;
     private Bitmap shipShoot;
     private Random random;
-    private Enemy[] enemies;
     private List<Bullet> bullets;
-    private List<Enemy> enemies2;
+    private List<Enemy> enemies;
     boolean isGameOver;
     private Bitmap pause;
     private int gameCounter=0;
     private int gemCounter=0;
     private Paint text;
     private int enemyCounter;
-    private Toast toast;
+    private boolean isPowerup=false,isPoweringup=false;
+    private Bitmap shipPowerup,shipShootPowerup;
+    private Bitmap powerup;
+    private int xPoweup,yPowerup,speedPowerup=20;
 
     public ViewTravel(GameActivityPortrait activity, short flag,int screenY,int screenX) {
 
@@ -77,14 +77,19 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         background1=Bitmap.createScaledBitmap(background1,screenX,screenY,false);
         background2=Bitmap.createScaledBitmap(background2,screenX,screenY,false);
 
+        powerup=BitmapFactory.decodeResource(getResources(),R.drawable.powerup);
+        powerup=Bitmap.createScaledBitmap(powerup,powerup.getWidth()/2,powerup.getHeight()/2,false);
+
         pause=BitmapFactory.decodeResource(getResources(),R.drawable.pause);
-        pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/50,pause.getHeight()/50,false);
+        pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/45,pause.getHeight()/45,false);
 
         yBackground2=-screenY;  //inizializza il secondo background sopra il primo
 
         if(flag==0){
             ship=BitmapFactory.decodeResource(getResources(),R.drawable.ship_astronaut);
             shipShoot=BitmapFactory.decodeResource(getResources(),R.drawable.ship_shoot);
+            //shipPowerup=BitmapFactory.decodeResource(getResources(),R.drawable.ship_powerup);
+            //shipShootPowerup=BitmapFactory.decodeResource(getResources(),R.drawable.ship_shoot_powerup);
         }
         else if(flag==1){
             //TO DO: CARICARE LA BITMAP DELLA NAVICELLA CON IL ROVER
@@ -92,19 +97,14 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
         ship=Bitmap.createScaledBitmap(ship,ship.getWidth()/7,ship.getHeight()/7,false);
         shipShoot=Bitmap.createScaledBitmap(shipShoot,shipShoot.getWidth()/7,shipShoot.getHeight()/7,false);
+        //shipPowerup=Bitmap.createScaledBitmap(shipPowerup,shipPowerup.getWidth()/2,shipPowerup.getHeight()/2,false);
+        //shipShootPowerup=Bitmap.createScaledBitmap(shipShootPowerup,shipShootPowerup.getWidth()/7,shipShootPowerup.getHeight()/7,false);
         xShip=(screenX/2)-(ship.getWidth()/2);
         yShip=(int)(screenY-10*screenRatioY-ship.getHeight());
 
         bullets=new ArrayList<>();
 
-        enemies2=new ArrayList<>();
-        /*enemies=new Enemy[4];
-
-        for( int i=0; i<4;i++){
-            Enemy enemy=new Enemy(getResources(),screenX);
-            enemy.getEnemy(); //genera casualmente un nemico per ogni elemento dell'array
-            enemies[i]=enemy;
-        }*/
+        enemies=new ArrayList<>();
 
         random=new Random();
 
@@ -140,10 +140,22 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         for(int i=0; i<enemyCounter;i++){
             Enemy enemy=new Enemy(getResources(),screenX);
             enemy.getEnemy(); //genera casualmente un nemico per ogni elemento dell'array
+            enemy.y=0;
             enemy.x=random.nextInt(screenX-enemy.width); //l'asse delle x viene scelto randomicamente
-            enemies2.add(enemy);
+            enemies.add(enemy);
         }
 
+    }
+
+    public void generatePowerup(){
+        if(!isPowerup){  //se non ci sono altri power up sullo schermo
+            int i=random.nextInt(10)+1;
+            if(i==5){
+                isPowerup=true; //se la random genera 5 in un range da 1 a 10 genera il powerup
+                yPowerup=0;
+                xPoweup=random.nextInt(screenX-powerup.getWidth());
+            }
+        }
     }
 
     private void draw(){
@@ -151,9 +163,12 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             Canvas canvas=getHolder().lockCanvas();
             canvas.drawBitmap(background1,xBackground1,yBackground1,paint);
             canvas.drawBitmap(background2,xBackground2,yBackground2,paint);
+            if(isPowerup){
+                canvas.drawBitmap(powerup,0,0,paint);
+            }
             canvas.drawText(""+gemCounter,canvas.getWidth()/2,30*screenRatioY,text);
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
-            for(Enemy enemy:enemies2){
+            for(Enemy enemy:enemies){
                 canvas.drawBitmap(enemy.enemy,enemy.x,enemy.y,paint);
                 if(enemy.gemShot){
                     canvas.drawBitmap(enemy.gem,enemy.xGem,enemy.yGem,paint);
@@ -206,6 +221,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
         if(gameCounter%100==0){
             generateEnemies();
+            generatePowerup();
         }
 
         List<Bullet> trash= new ArrayList<>();
@@ -216,8 +232,8 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                 trash.add(bullet);
             bullet.y -= 50 * screenRatioY;  //muovere il proiettile di 50 pixel
 
-            if(!enemies2.isEmpty()){
-                for(Enemy enemy:enemies2){
+            if(!enemies.isEmpty()){
+                for(Enemy enemy:enemies){
                     if(Rect.intersects(enemy.getCollisionShape(),bullet.getCollisionShape())){ //se un proiettile colpisce l'asteroide
                         if(enemy.isGem){
                             enemy.gemShot=true;
@@ -232,14 +248,24 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
         }
 
-
-
         for(Bullet bullet:trash){
             bullets.remove(bullet);
         }
 
-        if(!enemies2.isEmpty()){
-            for(Enemy enemy:enemies2){ //per ogni asteroide
+        if(isPowerup&&yPowerup<=screenY){   //controllo per la velocità casuale del power up
+            yPowerup+=speedPowerup;
+            int bound=(int)(30*screenRatioY);
+            speedPowerup=random.nextInt(bound);
+            if(speedPowerup<10*screenRatioY){
+                speedPowerup=(int) (10*screenRatioY);
+            }
+        }
+        else if(yPowerup>=screenY){
+            isPowerup=false;
+        }
+
+        if(!enemies.isEmpty()){
+            for(Enemy enemy:enemies){ //per ogni asteroide
                 enemy.y+=enemy.speed; //assegna alla y una certa velocità
                 if(enemy.y<screenY){  //finchè l'asteroide rimane sullo schermo aumenta la sua posizione lungo l'asse delle y
                     int bound=(int) (30*screenRatioY);
@@ -273,7 +299,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
         if(!enemiesTrash.isEmpty()){
             for(Enemy enemy:enemiesTrash){
-                enemies2.remove(enemy);
+                enemies.remove(enemy);
             }
         }
     }
@@ -332,7 +358,6 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                     //se il tocco avviene nel quadrato in cui si trova il bottone di pausa
                     short flag=0,flagActivity=0;
                     gameActivityPortrait.callManager(flag,flagActivity);
-                    //activityLandscape.callPauseFragment(); dovrebbe chiamare il fragment di pausa del gioco ma non so se si possa fare
                 }
                 isPressed=true;
                 setBullet();
@@ -345,6 +370,12 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     }
 
     private Bitmap getShip(){
+        if(isPoweringup){
+            if(isPressed){
+                return shipShootPowerup;
+            }
+            return shipPowerup;
+        }
         if(isPressed){
             return shipShoot;
         }

@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.graphics.Canvas;
@@ -37,7 +40,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     boolean isRight=true;
     boolean isJumping=false;
     boolean wasMirroredLeft=false,wasMirroredRight=true;
-    boolean isSwitching=false;
+    boolean isSwitching;
     boolean isEndFirstLevel=false;
     boolean isEndTravelToMars=false, isEndTravelToMoon=false;
     private Bitmap interfaceBackground;
@@ -82,7 +85,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
         }else{ floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);}
 
-
+        isSwitching=false;
 
         floor= BitmapFactory.decodeResource(getResources(), R.drawable.pavimento_museo);
         floor=Bitmap.createScaledBitmap(floor,screenX+2,floor.getHeight(),false);
@@ -95,14 +98,14 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         hiroki1 = Bitmap.createScaledBitmap(hiroki1,hiroki1.getWidth()/7, hiroki1.getHeight()/7,false);
         hiroki2 = Bitmap.createScaledBitmap(hiroki2,hiroki2.getWidth()/7, hiroki2.getHeight()/7,false);
         pause=BitmapFactory.decodeResource(getResources(),R.drawable.pause);
-        pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/50,pause.getHeight()/50,false);
+        pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/45,pause.getHeight()/45,false);
 
         apollo11=BitmapFactory.decodeResource(getResources(),R.drawable.apollo11);
         roverMars=BitmapFactory.decodeResource(getResources(),R.drawable.teca_rover);
         apollo11=Bitmap.createScaledBitmap(apollo11,apollo11.getWidth()/2,apollo11.getHeight()/2,false);
         roverMars=Bitmap.createScaledBitmap(roverMars,roverMars.getWidth()/2,roverMars.getHeight()/2,false);
 
-        interfaceBackground=BitmapFactory.decodeResource(getResources(),R.drawable.sfondo_interfacce);
+        interfaceBackground=BitmapFactory.decodeResource(getResources(),R.drawable.history_background);
         interfaceBackground=Bitmap.createScaledBitmap(interfaceBackground,-screenX,-screenY,false);
 
         widthF= (int) (floor.getWidth() * screenRatioX);
@@ -129,9 +132,26 @@ public class ViewMuseum extends SurfaceView implements Runnable {
             canvas.drawBitmap(getCharacter(),getX(),screenY-floor.getHeight()-character.getHeight(),paint); //screenY-floor.getHeight()-character.getHeight()
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
             if(isSwitching){  //se sta passando all'activity portrait chiama il fragment con la storia
-                short c=0;    //RIVEDERE
+                short c=0;
+                canvas.drawBitmap(interfaceBackground,0,0,paint);
+                TextPaint textPaint = new TextPaint();
+                textPaint.setTextAlign(Paint.Align.CENTER);
+                int xPos = (canvas.getWidth() / 2);
+                int yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;
+                textPaint.setColor(Color.WHITE);
+                textPaint.setTextSize(30);
+                String message="ciao mi chiamo Hirooki e sono appassionato di astronomia. Oggi sono in visita al museo della Nasa di Milano. Vieni con me a scoprire le avventure che si celano nello spazio!";
+                StaticLayout.Builder builder=StaticLayout.Builder.obtain(message,0,message.length(), textPaint,500)
+                        .setAlignment(Layout.Alignment.ALIGN_NORMAL);
+                StaticLayout staticLayout=builder.build();
+                canvas.save();
+                canvas.translate(xPos-getPaddingLeft(), yPos-getPaddingTop()-staticLayout.getHeight());
+                staticLayout.draw(canvas);
+                canvas.restore();
+                //isSwitching=false;
+                //sleep(10000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
+                hallactivity.callTravel(c); //passa 0 come flag perché sta andando verso la luna
                 getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
-                hallactivity.callManager(c,(short)0);
                 return;
             }
             getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
@@ -190,11 +210,9 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 }
                if(event.getX()>200*(int) screenRatioX&&event.getX()<200*(int) screenRatioX+apollo11.getWidth()&&event.getY()>0&&event.getY()<apollo11.getHeight()){
                    if(!isEndTravelToMoon){ //se non si è ancora completati il viaggio verso la luna parte direttamente l'activity portrait
-                       short c=0;
-                       isSwitching=true;  //RIVEDERE
-                       sleep(4000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
-                       isSwitching=false;
-                       hallactivity.callTravel(c); //passa 0 come flag perché sta andando verso la luna
+
+                       isSwitching=true;
+
                        //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
                    }
                    else{
@@ -208,7 +226,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                    }
                    else{
                        if(!isEndTravelToMars){
-                           short c=1;
+                           short c=1; //passa 1 come flag perché sta andando verso Marte
                            hallactivity.callTravel(c);
                        }
                        else{
@@ -216,8 +234,6 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                        }
                    }
 
-                   /*short c=1;
-                   activityLandscape.callTravel(c);*/ //passa 1 come flag perché sta andando verso Marte
                }
                 //fare l'if per il tocco sul sulla teca di marte
                 isJumping=true;
