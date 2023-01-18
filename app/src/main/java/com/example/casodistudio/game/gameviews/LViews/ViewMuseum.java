@@ -61,7 +61,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         this.hallactivity=activity;
         this.screenX=screenX;
         this.screenY=screenY;
-        screenRatioX=1920f/screenX;
+        screenRatioX=1920F/screenX;
         screenRatioY=1080F/screenY;
         paint=new Paint();
         hiroki = new Character(1,getResources(),screenX,screenY,screenRatioX,screenRatioY);
@@ -79,12 +79,12 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         floor=Bitmap.createScaledBitmap(floor,screenX+2,floor.getHeight(),false);
 
         //character = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki_fermo);// da togliere perche gestito dalla classe character
-       // hiroki1 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki1);
+        //hiroki1 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki1);
         //hiroki2 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki2);
 
-       // character = Bitmap.createScaledBitmap(character,character.getWidth()/7, character.getHeight()/7,false);// da togliere perche gestito dalla classe character
+        //character = Bitmap.createScaledBitmap(character,character.getWidth()/7, character.getHeight()/7,false);// da togliere perche gestito dalla classe character
         //hiroki1 = Bitmap.createScaledBitmap(hiroki1,hiroki1.getWidth()/7, hiroki1.getHeight()/7,false);
-       // hiroki2 = Bitmap.createScaledBitmap(hiroki2,hiroki2.getWidth()/7, hiroki2.getHeight()/7,false);
+        //hiroki2 = Bitmap.createScaledBitmap(hiroki2,hiroki2.getWidth()/7, hiroki2.getHeight()/7,false);
         pause=BitmapFactory.decodeResource(getResources(),R.drawable.pause);
         pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/45,pause.getHeight()/45,false);
 
@@ -109,7 +109,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         height*=(int) Resources.getSystem().getDisplayMetrics().density;
 
         //charY= screenY - floor.getHeight() - character.getHeight();
-       // charX = 60;
+        //charX = 60;
         rectGround = new Rect(0,screenX-floor.getHeight(),screenX, screenY);
     }
 

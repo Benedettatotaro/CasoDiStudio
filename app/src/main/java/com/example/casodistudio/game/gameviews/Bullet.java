@@ -22,8 +22,8 @@ public class Bullet {
         width /=5;
         height /=5;
 
-        width *=(int) screenRatioX;
-        height *=(int) screenRatioY;
+        width *=screenRatioX;
+        height *=screenRatioY;
 
         bullet=Bitmap.createScaledBitmap(bullet,width,height,false); //per ridimensionare il proiettile
 

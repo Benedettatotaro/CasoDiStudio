@@ -52,12 +52,13 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     public Background background_1,background_2;
     public Ship ship;
     private SharedPreferences prefs;
+    short flagPlanet;
     //private Update update;
 
     public ViewTravel(GameActivityPortrait activity, short flag,int screenY,int screenX) {
 
         super(activity);
-
+        this.flagPlanet =flag;
         this.gameActivityPortrait=activity;
         this.screenX=screenX;
         this.screenY=screenY;
@@ -97,23 +98,12 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
     @Override
     public void run() {
-        if(gameCounter<2166){
             while (isPlaying){   //il gioco si ferma all'incirca dopo 1 minuto e mezzo di gioco
                 update();
                 draw();
                 sleep(36);
                 gameCounter++;
             }
-        }
-        else{  //se il gioco finisce salva i dati delle gemme
-            //SCRIVERE SE E' LOGGATO E IN QUEL CASO SALVARE I DATI E SE è CONNESSO AD INTERNET SCRIVERLI ANCHE SU FIREBASE
-            SharedPreferences.Editor editor= prefs.edit();
-            editor.putInt("moonGem",gemCounter);
-            editor.putBoolean("moonFinished",true); //imposta che il livello della luna è finito
-            editor.apply();
-            sleep(10000);
-            //TO DO: CHIAMARE L'ACTIVITY DELLA LUNA
-        }
     }
 
     private void sleep(int time) {
@@ -165,16 +155,29 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                     canvas.drawBitmap(enemy.gem,enemy.xGem,enemy.yGem,paint);
                 }
             }
+
             canvas.drawBitmap(ship.getShip(),ship.xShip,ship.yShip,paint);
             if(!bullets.isEmpty()){
                 for(Bullet bullet:bullets){
                     canvas.drawBitmap(bullet.bullet,bullet.x,bullet.y,paint);
                 }
             }
-            if(gameCounter>2166){
-                //TO DO:CALLING VIEW LUNA
+
+
+            if(gameCounter>5){  //se il gioco finisce salva i dati delle gemme
+                //SCRIVERE SE E' LOGGATO E IN QUEL CASO SALVARE I DATI E SE è CONNESSO AD INTERNET SCRIVERLI ANCHE SU FIREBASE
+                SharedPreferences.Editor editor= prefs.edit();
+                editor.putInt("moonGem",gemCounter);
+                editor.putBoolean("moonFinished",true); //imposta che il livello della luna è finito
+                editor.apply();
+                //sleep(10000);
                 getHolder().unlockCanvasAndPost(canvas);
+                gameActivityPortrait.callPlanet(flagPlanet);
+                return;
+
+                //TO DO: CHIAMARE L'ACTIVITY DELLA LUNA
             }
+
             if(isGameOver){ //se hai perso
                 isPlaying=false; //il gioco si blocca
                 Paint textPaint = new Paint();
@@ -219,28 +222,28 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
         List<Bullet> trash= new ArrayList<>();
         List<Enemy> enemiesTrash=new ArrayList<>();
+        if(!bullets.isEmpty()) {
+            for (Bullet bullet : bullets) {
+                if (bullet.y < 0)   //questo vuol dire che il proiettile è nello schermo va aggiunto alla lista dei proiettili trash
+                    trash.add(bullet);
+                bullet.y -= 50 * screenRatioY;  //muovere il proiettile di 50 pixel
 
-        for(Bullet bullet:bullets) {
-            if (bullet.y < 0)   //questo vuol dire che il proiettile è nello schermo va aggiunto alla lista dei proiettili trash
-                trash.add(bullet);
-            bullet.y -= 50 * screenRatioY;  //muovere il proiettile di 50 pixel
-
-            if(!enemies.isEmpty()){
-                for(Enemy enemy:enemies){
-                    if(Rect.intersects(enemy.getCollisionShape(),bullet.getCollisionShape())){ //se un proiettile colpisce l'asteroide
-                        if(enemy.isGem){
-                            enemy.gemShot=true;
-                            enemy.xGem=enemy.x+enemy.enemy.getWidth()/2-enemy.gem.getWidth()/2;
-                            enemy.yGem=enemy.y+enemy.enemy.getHeight()/2-enemy.gem.getHeight()/2;
+                if (!enemies.isEmpty()) {
+                    for (Enemy enemy : enemies) {
+                        if (Rect.intersects(enemy.getCollisionShape(), bullet.getCollisionShape())) { //se un proiettile colpisce l'asteroide
+                            if (enemy.isGem) {
+                                enemy.gemShot = true;
+                                enemy.xGem = enemy.x + enemy.enemy.getWidth() / 2 - enemy.gem.getWidth() / 2;
+                                enemy.yGem = enemy.y + enemy.enemy.getHeight() / 2 - enemy.gem.getHeight() / 2;
+                            }
+                            enemy.y -= screenY + 500; //l'asteroide si sposta di 500+screenY
+                            bullet.y = -500;
                         }
-                        enemy.y-=screenY+500; //l'asteroide si sposta di 500+screenY
-                        bullet.y=-500;
                     }
                 }
+
             }
-
         }
-
         for(Bullet bullet:trash){
             bullets.remove(bullet);
         }

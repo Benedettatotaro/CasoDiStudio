@@ -40,6 +40,9 @@ public class ManagerActivity extends AppCompatActivity {
             FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.container_manager, new RankingFragment());
             ft.commit();
+        }/*else if (flag ==2){
+
         }
+        */
     }
 }

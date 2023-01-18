@@ -63,4 +63,12 @@ public class GameActivityPortrait extends AppCompatActivity {
         i.putExtras(bundle);
         this.startActivity(i);
     }
+
+    public void callPlanet(short flag){
+        Bundle bundle=new Bundle(1);
+        bundle.putShort("flagPlanet", flag); //setta il flag nel boundle uguale a 0 perchè sta chiamando il museo
+        Intent i = new Intent(GameActivityPortrait.this, GameActivityLandscape.class);
+        i.putExtras(bundle);
+        this.startActivity(i);
+    }
 }

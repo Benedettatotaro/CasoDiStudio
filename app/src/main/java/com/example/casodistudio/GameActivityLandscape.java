@@ -7,12 +7,13 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import com.example.casodistudio.game.gameviews.LViews.ViewLandscape;
 import com.example.casodistudio.game.gameviews.LViews.ViewMuseum;
 
 public class GameActivityLandscape extends AppCompatActivity {
 
-    private ViewMuseum viewMuseo;  //TO DO: CAMBIARE IN VIEW MARTE E LUNA E FARE IL SET CONTENT VIEW
-    private short flag;
+    private ViewLandscape viewLandscape;  //TO DO: CAMBIARE IN VIEW MARTE E LUNA E FARE IL SET CONTENT VIEW
+    private short flagPlanet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +23,7 @@ public class GameActivityLandscape extends AppCompatActivity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-         flag=getIntent().getExtras().getShort("flag");
+         flagPlanet=getIntent().getExtras().getShort("flagPlanet");
         //imposta lo schermo in full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -32,27 +33,21 @@ public class GameActivityLandscape extends AppCompatActivity {
 
         //e le passa al costruttore della view
 
-        switch (flag){
-            //case 0: viewMuseo = new ViewMuseo(this,point.x,point.y);
-        }
-       // viewLandscape=new ViewLandscape(this,point.x,point.y);
-        //viewMuseo = new ViewMuseo(this,point.x,point.y);
-
-        //setta la view del gioco
-        setContentView(viewMuseo);
+        viewLandscape= new ViewLandscape(GameActivityLandscape.this,flagPlanet,point.x,point.y);
+        setContentView(viewLandscape);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        viewMuseo.resume();
+        viewLandscape.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        viewMuseo.pause();
+        viewLandscape.pause();
     }
 
 }
