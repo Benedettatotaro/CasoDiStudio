@@ -47,6 +47,8 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     private SharedPreferences prefs;
     private float charX, charY; // Dove viene spawnato il personaggio
     private int moonGem;
+    private Bitmap gem;
+    private int gemTot,marsGem=0;
     Rect rectGround;
 
 
@@ -54,15 +56,6 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         super(activity);
 
         prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE);
-
-        moonGem=prefs.getInt("moonGem",0);
-
-        if(moonGem<50&&!prefs.getBoolean("moonFinished",false)){
-            isEndFirstLevel=false;
-        }
-        else{
-            isEndFirstLevel=true;
-        }
 
         this.hallactivity=activity;
         this.screenX=screenX;
@@ -114,6 +107,9 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         interfaceBackground=BitmapFactory.decodeResource(getResources(),R.drawable.history_background);
         interfaceBackground=Bitmap.createScaledBitmap(interfaceBackground,-screenX,-screenY,false);
 
+        gem=BitmapFactory.decodeResource(getResources(),R.drawable.gem);
+        gem=Bitmap.createScaledBitmap(gem,gem.getWidth()/2,gem.getHeight()/2,false);
+
         widthF= (int) (floor.getWidth() * screenRatioX);
         heightF=(int)(floor.getHeight() * screenRatioY);
 
@@ -123,6 +119,18 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         charY= screenY - floor.getHeight() - character.getHeight();
         charX = 60;
         rectGround = new Rect(0,screenX-floor.getHeight(),screenX, screenY);
+    }
+
+    private void updateGem(){
+        moonGem=prefs.getInt("moonGem",0);
+
+        if(moonGem<50&&!prefs.getBoolean("moonFinished",false)){
+            isEndFirstLevel=false;
+        }
+        else{
+            isEndFirstLevel=true;
+        }
+        gemTot=moonGem+marsGem;
     }
 
 
@@ -135,6 +143,11 @@ public class ViewMuseum extends SurfaceView implements Runnable {
             canvas.drawBitmap(apollo11,200*(int) screenRatioX,0,paint);
             canvas.drawBitmap(getCharacter(),getX(),screenY-floor.getHeight()-character.getHeight(),paint); //screenY-floor.getHeight()-character.getHeight()
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
+            canvas.drawBitmap(gem,10*screenRatioX,10*screenRatioY,paint);
+            Paint text=new Paint();
+            text.setColor(Color.WHITE);
+            text.setTextSize(gem.getHeight());
+            canvas.drawText(gemTot+"",10*screenRatioX+gem.getWidth()+10,gem.getHeight()+5*screenRatioX,text);
             if(isSwitching){  //se sta passando all'activity portrait chiama il fragment con la storia
                 short c=0;
                 canvas.drawBitmap(interfaceBackground,0,0,paint);
@@ -167,6 +180,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     @Override
     public void run() {
         while (isPlaying){
+            updateGem();
             draw();
             sleep(36); //setta la pausa del thread ogni 36 milli secondi così che il gioco runni a 36fps
         }

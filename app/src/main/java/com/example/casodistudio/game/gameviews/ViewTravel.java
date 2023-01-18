@@ -37,21 +37,22 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     private GameActivityPortrait gameActivityPortrait;
     private Paint paint;
     private SensorManager sManager;
-    private int screenX,screenY;
+    public int screenX,screenY;
     private Sensor accelerometer;
     private boolean isPressed=false;
-    private Random random;
-    private List<Bullet> bullets;
-    private List<Enemy> enemies;
+    public Random random;
+    public List<Bullet> bullets;
+    public List<Enemy> enemies;
     boolean isGameOver;
     private Bitmap pause;
-    private int gameCounter=0;
-    private int gemCounter=0;
+    public int gameCounter=0;
+    public int gemCounter=0;
     private Paint text;
     private int enemyCounter;
-    private Background background_1,background_2;
-    private Ship ship;
+    public Background background_1,background_2;
+    public Ship ship;
     private SharedPreferences prefs;
+    //private Update update;
 
     public ViewTravel(GameActivityPortrait activity, short flag,int screenY,int screenX) {
 
@@ -70,9 +71,10 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         text.setTextSize(50);
         text.setTextAlign(Paint.Align.CENTER);
 
+        //update=new Update(ViewTravel.this);
+
         background_1=new Background(getResources(),screenX,screenY);
         background_2=new Background(getResources(),screenX,screenY);
-
 
         pause=BitmapFactory.decodeResource(getResources(),R.drawable.pause);
         pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/45,pause.getHeight()/45,false);
@@ -108,6 +110,8 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             editor.putInt("moonGem",gemCounter);
             editor.putBoolean("moonFinished",true); //imposta che il livello della luna è finito
             editor.apply();
+            sleep(10000);
+            //TO DO: CHIAMARE L'ACTIVITY DELLA LUNA
         }
     }
 
@@ -275,6 +279,11 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                 }
                 if(Rect.intersects(enemy.getCollisionShape(),ship.getCollisionShape())){
                     if(ship.isPoweringup){  //se è il powerup non perdi
+                        if(enemy.isGem){
+                            enemy.gemShot=true;
+                            enemy.xGem=enemy.x+enemy.enemy.getWidth()/2-enemy.gem.getWidth()/2;
+                            enemy.yGem=enemy.y+enemy.enemy.getHeight()/2-enemy.gem.getHeight()/2;
+                        }
                         enemy.y-=screenY+500; //l'asteroide si sposta di 500+screenY
                     }
                     else{

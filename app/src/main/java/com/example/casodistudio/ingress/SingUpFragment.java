@@ -3,6 +3,7 @@ package com.example.casodistudio.ingress;
 import androidx.annotation.RequiresApi;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
@@ -42,8 +43,9 @@ public class SingUpFragment extends Fragment {
     private EditText password;
     private EditText conPassword;
     private Button singupBtn;
+    private SharedPreferences prefs;
 
-    DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReferenceFromUrl("https://casodistudio-dcae5-default-rtdb.firebaseio.com/");
+    //DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReferenceFromUrl("https://casodistudio-dcae5-default-rtdb.firebaseio.com/");
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,10 +59,10 @@ public class SingUpFragment extends Fragment {
         conPassword=v.findViewById(R.id.conPassword);
         singupBtn=v.findViewById(R.id.singupBtn);
 
+        prefs=getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
 
-            singupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+
+            singupBtn.setOnClickListener(view -> {
                 String nameTxt=name.getText().toString();
                 String surnameTxt=surname.getText().toString();
                 String emailtxt=email.getText().toString();
@@ -88,10 +90,14 @@ public class SingUpFragment extends Fragment {
                 }
                 else{
 
+                    SharedPreferences.Editor editor= prefs.edit();
+                    editor.putString("email",emailtxt); //salva l'email dell'utente nel device
+                    editor.apply();
+
                     //controlla se il device è connesso ad internet
                     ConnectivityManager connectivityManager =  (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                    if(connectivityManager.getActiveNetwork()==null){  //se il metodo get Active NetWork ritorna null vuol dire che il dispositivo non è connesso ad internet
+                    /*if(connectivityManager.getActiveNetwork()==null){  //se il metodo get Active NetWork ritorna null vuol dire che il dispositivo non è connesso ad internet
                         Toast.makeText(getActivity(), "Il dispositivo non è connesso ad internet", Toast.LENGTH_SHORT).show();
                     }
 
@@ -128,10 +134,9 @@ public class SingUpFragment extends Fragment {
 
                             }
                         });
-                    }
+                    }*/
                 }
-            }
-        });
+            });
 
         return v;
     }
