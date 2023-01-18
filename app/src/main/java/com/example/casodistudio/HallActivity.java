@@ -63,4 +63,9 @@ public class HallActivity extends AppCompatActivity {
         this.startActivity(i);
     }
 
+    public void callLogin(){  //chiama l'activity login
+        Intent i=new Intent(HallActivity.this,MainActivity.class);
+        this.startActivity(i);
+    }
+
 }

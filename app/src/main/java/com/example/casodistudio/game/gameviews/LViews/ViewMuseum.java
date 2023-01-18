@@ -48,6 +48,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     private int moonGem;
     private Bitmap gem;
     private int gemTot,marsGem=0;
+    private Bitmap login;
     Rect rectGround;
     Character hiroki;
 
@@ -86,6 +87,9 @@ public class ViewMuseum extends SurfaceView implements Runnable {
        // hiroki2 = Bitmap.createScaledBitmap(hiroki2,hiroki2.getWidth()/7, hiroki2.getHeight()/7,false);
         pause=BitmapFactory.decodeResource(getResources(),R.drawable.pause);
         pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/45,pause.getHeight()/45,false);
+
+        login=BitmapFactory.decodeResource(getResources(),R.drawable.login);
+        login=Bitmap.createScaledBitmap(login,login.getWidth()/45,login.getHeight()/45,false);
 
         apollo11=BitmapFactory.decodeResource(getResources(),R.drawable.apollo11);
         roverMars=BitmapFactory.decodeResource(getResources(),R.drawable.teca_rover);
@@ -131,6 +135,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
             canvas.drawBitmap(apollo11,200*(int) screenRatioX,0,paint);
             canvas.drawBitmap(hiroki.charOrientation(),hiroki.charMovement(),screenY-floor.getHeight()-hiroki.getStopAnimation().getHeight(),paint); //screenY-floor.getHeight()-character.getHeight()
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
+            canvas.drawBitmap(login,10*screenRatioX,screenY-10*screenRatioY-login.getHeight(),paint);
             canvas.drawBitmap(gem,10*screenRatioX,10*screenRatioY,paint);
             Paint text=new Paint();
             text.setColor(Color.WHITE);
@@ -211,11 +216,13 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
+                    if(event.getX()>10*screenRatioX&&event.getX()<10*screenRatioX+login.getWidth()&&event.getY()<screenY-10*screenRatioX&&event.getY()>screenY-10*screenRatioY-login.getHeight()){
+                        hallactivity.callLogin();
+                    }
                 if(event.getX()>screenX-pause.getWidth()-10*screenRatioX&&event.getY()<10*screenRatioX+pause.getHeight()){
                     //se il tocco avviene nel quadrato in cui si trova il bottone di pausa
                     short flag=0,flagActivity=1;
                     hallactivity.callManager(flag,flagActivity);
-                    //activityLandscape.callPauseFragment(); dovrebbe chiamare il fragment di pausa del gioco ma non so se si possa fare
                 }
                if(event.getX()>200*(int) screenRatioX&&event.getX()<200*(int) screenRatioX+apollo11.getWidth()&&event.getY()>0&&event.getY()<apollo11.getHeight()){
 

@@ -61,7 +61,7 @@ public class ViewMars extends SurfaceView implements Runnable {
             Canvas canvas=getHolder().lockCanvas();
             canvas.drawBitmap(background_marte,0,0,paint);
             canvas.drawBitmap(ground_marte,0,0,paint);
-            canvas.drawBitmap(getCharacter(),getX(),screenY-ground_marte.getHeight()-rover.getHeight(),paint);
+            //canvas.drawBitmap(getCharacter(),getX(),screenY-ground_marte.getHeight()-rover.getHeight(),paint);
         }
     }
     @Override

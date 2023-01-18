@@ -26,7 +26,6 @@ public class HomeFragment extends Fragment {
 
     private Button loginButton;
     private Button singupButton;
-    private Button hostButton;
 
     @SuppressLint("MissingInflatedId")
     @Nullable
@@ -36,7 +35,6 @@ public class HomeFragment extends Fragment {
 
         loginButton = v.findViewById(R.id.loginBtn);
         singupButton = v.findViewById(R.id.singupBtn);
-        hostButton = v.findViewById(R.id.hostBtn);
 
         loginButton.setOnClickListener(v14 -> {
             AppCompatActivity activity = (MainActivity) getActivity();
@@ -44,14 +42,6 @@ public class HomeFragment extends Fragment {
             ft.replace(R.id.container, new LoginFragment());
             ft.addToBackStack(null);
             ft.commit();
-        });
-
-        //quando si clicca sul bottone per entrare come ospiti viene chiamato
-        //un'intent che chiama l'activity landscape
-        hostButton.setOnClickListener(v13 -> {
-            Intent i = new Intent(getActivity(), HallActivity.class);
-            ///i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-            getActivity().startActivity(i);
         });
 
         singupButton.setOnClickListener(v13 -> {

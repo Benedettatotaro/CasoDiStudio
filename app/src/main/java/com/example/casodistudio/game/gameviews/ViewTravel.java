@@ -106,6 +106,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             }
         }
         else{  //se il gioco finisce salva i dati delle gemme
+            //SCRIVERE SE E' LOGGATO E IN QUEL CASO SALVARE I DATI E SE è CONNESSO AD INTERNET SCRIVERLI ANCHE SU FIREBASE
             SharedPreferences.Editor editor= prefs.edit();
             editor.putInt("moonGem",gemCounter);
             editor.putBoolean("moonFinished",true); //imposta che il livello della luna è finito

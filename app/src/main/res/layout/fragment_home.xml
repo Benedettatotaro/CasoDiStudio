@@ -43,16 +43,6 @@ per salvare i tuoi dati\no entra come ospite per testare la nostra app"/>
         android:layout_centerHorizontal="true"
         android:layout_margin="15dp"/>
 
-    <Button
-        android:id="@+id/hostBtn"
-        android:layout_below="@+id/singupBtn"
-        android:layout_width="150dp"
-        android:textAllCaps="false"
-        android:layout_height="wrap_content"
-        android:text="Ospite"
-        android:background="@drawable/edittextbackground"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"/>
 
     <!-- immagine trasparente così da far comparire
      l'immagine dell'activity che sarà la stessa
