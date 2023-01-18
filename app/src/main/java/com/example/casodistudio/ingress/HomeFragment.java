@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
         //un'intent che chiama l'activity landscape
         hostButton.setOnClickListener(v13 -> {
             Intent i = new Intent(getActivity(), HallActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            ///i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
             getActivity().startActivity(i);
         });
 

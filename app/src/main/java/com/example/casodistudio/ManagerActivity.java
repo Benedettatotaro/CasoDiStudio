@@ -3,7 +3,9 @@ package com.example.casodistudio;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 public class ManagerActivity extends AppCompatActivity {
 
@@ -13,10 +15,17 @@ public class ManagerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         short flag=getIntent().getExtras().getShort("flag");
         flagActivity=getIntent().getExtras().getShort("flagActivity");
         //questa activity è solo un conenitore del fragment di pausa
         if(flag==0){  //se il flag è zero chiama il fragment di pausa
+            if (flagActivity == 0) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+            else if(flagActivity==1){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
             FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.container_manager, new PauseFragment(flagActivity));
             ft.commit();
