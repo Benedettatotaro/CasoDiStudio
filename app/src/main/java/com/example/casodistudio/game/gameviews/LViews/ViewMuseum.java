@@ -145,7 +145,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 short c=0;
                 canvas.drawBitmap(interfaceBackground,0,0,paint);
                 TextPaint textPaint = new TextPaint();
-                textPaint.setTextAlign(Paint.Align.CENTER);
+                //textPaint.setTextAlign(Paint.Align.CENTER);
                 int xPos = (canvas.getWidth() / 2);
                 int yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;
                 textPaint.setColor(Color.WHITE);
