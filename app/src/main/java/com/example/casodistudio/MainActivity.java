@@ -9,7 +9,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import com.example.casodistudio.game.gameviews.Main;
+
 import com.example.casodistudio.ingress.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {

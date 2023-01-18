@@ -27,7 +27,13 @@ public class ManagerActivity extends AppCompatActivity {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
             FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.container_manager, new PauseFragment(flagActivity));
+            PauseFragment fragment = new PauseFragment();
+            Bundle pauseFragmentFlag = new Bundle(1);
+            pauseFragmentFlag.putShort("flagActivity", flag);
+            fragment.setArguments(pauseFragmentFlag);
+            ft.replace(R.id.container_manager,fragment);
+
+
             ft.commit();
         }
         else if(flag==1){  //altrimenti chiama il fragment delle classifiche

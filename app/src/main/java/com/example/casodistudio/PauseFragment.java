@@ -3,6 +3,7 @@ package com.example.casodistudio;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
@@ -14,8 +15,16 @@ public class PauseFragment extends Fragment {
 
     private short flag;
 
-    public PauseFragment(short flag){
-        this.flag=flag;
+    public PauseFragment()
+    {
+        //this.flag=flag;
+    }
+
+    @Override
+    public void setArguments(@Nullable Bundle args) {
+        super.setArguments(args);
+        this.flag = args.getShort("flagActivity");
+
     }
 
     private boolean isMute=false;

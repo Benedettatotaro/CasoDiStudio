@@ -373,7 +373,8 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         return true;
     }
 
-    public void setBullet(){
+    public void setBullet()
+    {
 
         Bullet bullet=new Bullet(getResources());
         bullet.x=ship.xShip+ship.shipShoot.getWidth()/2-bullet.bullet.getWidth()/2;
