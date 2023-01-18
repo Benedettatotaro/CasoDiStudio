@@ -43,7 +43,7 @@ public class SingUpFragment extends Fragment {
     private EditText password;
     private EditText conPassword;
     private Button singupBtn;
-    private SharedPreferences prefs;
+
 
     //DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReferenceFromUrl("https://casodistudio-dcae5-default-rtdb.firebaseio.com/");
 
@@ -58,9 +58,6 @@ public class SingUpFragment extends Fragment {
         password=v.findViewById(R.id.password);
         conPassword=v.findViewById(R.id.conPassword);
         singupBtn=v.findViewById(R.id.singupBtn);
-
-        prefs=getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
-
 
             singupBtn.setOnClickListener(view -> {
                 String nameTxt=name.getText().toString();
@@ -89,10 +86,6 @@ public class SingUpFragment extends Fragment {
 
                 }
                 else{
-
-                    SharedPreferences.Editor editor= prefs.edit();
-                    editor.putString("email",emailtxt); //salva l'email dell'utente nel device
-                    editor.apply();
 
                     //controlla se il device è connesso ad internet
                     ConnectivityManager connectivityManager =  (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);

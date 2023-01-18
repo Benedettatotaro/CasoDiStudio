@@ -2,6 +2,7 @@ package com.example.casodistudio.ingress;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
@@ -29,6 +30,7 @@ public class LoginFragment extends Fragment {
     private EditText email;
     private EditText password;
     private Button loginBtn;
+    private SharedPreferences prefs;
 
     //oggetto che si collega al database creato su Firebase
     DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReferenceFromUrl("https://loginregister-d0f2d-default-rtdb.firebaseio.com/");
@@ -38,6 +40,8 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_login, container, false);
+
+        prefs=getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
 
         if(databaseReference==null){
             Toast toast=Toast.makeText(getActivity(), "ehm c'è qualquadra che non cosa", Toast.LENGTH_SHORT);
@@ -79,6 +83,10 @@ public class LoginFragment extends Fragment {
             }*/
 
                 else{ //altrimenti se entrambi i campi sono pieni e validi
+
+                    SharedPreferences.Editor editor= prefs.edit();
+                    editor.putString("email",emailtxt); //salva l'email dell'utente nel device
+                    editor.apply();
 
                     //controlla se il device è connesso ad internet
                     ConnectivityManager connectivityManager =  (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
