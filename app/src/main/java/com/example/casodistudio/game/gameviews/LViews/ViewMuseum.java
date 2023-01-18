@@ -35,7 +35,6 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     private Bitmap character; // hiroki fermo
     private Bitmap hiroki1;
     private Bitmap hiroki2;
-    int counter=1;
     boolean isPressed=false;
     boolean isRight=true;
     boolean isJumping=false;
@@ -64,27 +63,27 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         screenRatioX=1920f/screenX;
         screenRatioY=1080F/screenY;
         paint=new Paint();
-
+        hiroki = new Character(1,getResources(),screenX,screenY,screenRatioX,screenRatioY);
         width = museum_background.getWidth();
         height = museum_background.getHeight();
 
         museum_background = Bitmap.createScaledBitmap(museum_background,screenX,screenY,false); //lo screen x deve essere uguale allo schermo
 
-        float density = getResources().getDisplayMetrics().density;
-        setBitmapResolution(density);
+        //float density = getResources().getDisplayMetrics().density;
+        //setBitmapResolution(density);
 
         isSwitching=false;
 
         floor= BitmapFactory.decodeResource(getResources(), R.drawable.pavimento_museo);
         floor=Bitmap.createScaledBitmap(floor,screenX+2,floor.getHeight(),false);
 
-        character = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki_fermo);// da togliere perche gestito dalla classe character
-        hiroki1 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki1);
-        hiroki2 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki2);
+        //character = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki_fermo);// da togliere perche gestito dalla classe character
+       // hiroki1 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki1);
+        //hiroki2 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki2);
 
-        character = Bitmap.createScaledBitmap(character,character.getWidth()/7, character.getHeight()/7,false);// da togliere perche gestito dalla classe character
-        hiroki1 = Bitmap.createScaledBitmap(hiroki1,hiroki1.getWidth()/7, hiroki1.getHeight()/7,false);
-        hiroki2 = Bitmap.createScaledBitmap(hiroki2,hiroki2.getWidth()/7, hiroki2.getHeight()/7,false);
+       // character = Bitmap.createScaledBitmap(character,character.getWidth()/7, character.getHeight()/7,false);// da togliere perche gestito dalla classe character
+        //hiroki1 = Bitmap.createScaledBitmap(hiroki1,hiroki1.getWidth()/7, hiroki1.getHeight()/7,false);
+       // hiroki2 = Bitmap.createScaledBitmap(hiroki2,hiroki2.getWidth()/7, hiroki2.getHeight()/7,false);
         pause=BitmapFactory.decodeResource(getResources(),R.drawable.pause);
         pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/45,pause.getHeight()/45,false);
 
@@ -105,8 +104,8 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         width*=(int) Resources.getSystem().getDisplayMetrics().density;
         height*=(int) Resources.getSystem().getDisplayMetrics().density;
 
-        charY= screenY - floor.getHeight() - character.getHeight();
-        charX = 60;
+        //charY= screenY - floor.getHeight() - character.getHeight();
+       // charX = 60;
         rectGround = new Rect(0,screenX-floor.getHeight(),screenX, screenY);
     }
 
@@ -130,7 +129,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
             canvas.drawBitmap(roverMars,screenX-roverMars.getWidth()-200*screenRatioX,screenY-floor.getHeight()-roverMars.getHeight()+5,paint);
             canvas.drawBitmap(floor,0,screenY-floor.getHeight(),paint);
             canvas.drawBitmap(apollo11,200*(int) screenRatioX,0,paint);
-            canvas.drawBitmap(getCharacter(),getX(),screenY-floor.getHeight()-character.getHeight(),paint); //screenY-floor.getHeight()-character.getHeight()
+            canvas.drawBitmap(hiroki.charOrientation(),hiroki.charMovement(),screenY-floor.getHeight()-hiroki.getStopAnimation().getHeight(),paint); //screenY-floor.getHeight()-character.getHeight()
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
             canvas.drawBitmap(gem,10*screenRatioX,10*screenRatioY,paint);
             Paint text=new Paint();
@@ -187,6 +186,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
     public void resume(){  //quando il gioco riprende viene richiamato
 
+
         isPlaying=true;
         thread=new Thread(this);
         thread.start();  //il run del thread
@@ -218,7 +218,9 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                     //activityLandscape.callPauseFragment(); dovrebbe chiamare il fragment di pausa del gioco ma non so se si possa fare
                 }
                if(event.getX()>200*(int) screenRatioX&&event.getX()<200*(int) screenRatioX+apollo11.getWidth()&&event.getY()>0&&event.getY()<apollo11.getHeight()){
+
                    isSwitching=true;
+
                    //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
                 }
                if((event.getX()>screenX-roverMars.getWidth()-200*screenRatioX)&&(event.getX()<screenX-200*screenRatioX)&&event.getY()>screenY-floor.getHeight()-roverMars.getHeight()+5&&event.getY()<screenY-floor.getHeight()+5)
@@ -239,22 +241,29 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
                }
                 //fare l'if per il tocco sul sulla teca di marte
-                isJumping=true;
+                hiroki.setIsJumping(true);
+               // isJumping=true;
                 break;
             case MotionEvent.AXIS_PRESSURE: //se l'utente sta tenendo premuto lo schermo
                 if(event.getX()<screenX/2) {
-                    isPressed=true;
-                    isRight=false;  //imposta che il personaggio deve muoversi verso sinistra
+                    hiroki.setIsPressed(true);
+                    hiroki.setIsRight(false);
+                    //isPressed=true;
+                   // isRight=false;  //imposta che il personaggio deve muoversi verso sinistra
                     return true;
                 }
                 else if(event.getX()>screenX/2){//quando questo succede il tocco arriva dalla parte destra
-                    isPressed=true;
-                    isRight=true;  //imposta che il personaggio deve muoversi verso destra
+                    hiroki.setIsPressed(true);
+                    hiroki.setIsRight(true);
+                   // isPressed=true;
+                    //isRight=true;  //imposta che il personaggio deve muoversi verso destra
                     return true;
                 }
             case MotionEvent.ACTION_UP:     //se l'utente ha lasciato lo schermo
-                isJumping=false;
-                isPressed=false;
+                hiroki.setIsPressed(false);
+
+                //isJumping=false;
+                //isPressed=false;
                 break;
 
         }
@@ -262,77 +271,4 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         return true;
     }
 
-
-    public Bitmap getCharacter(){ // da togliere perche gestito dalla classe character
-        if(isRight&&wasMirroredLeft){ //se l'utente sta premendo per spostarsi verso destra e la bitmap è flippata restituisce la bitmap normale
-            character=Bitmap.createScaledBitmap(character,-(character.getWidth()),character.getHeight(),false);
-            hiroki1=Bitmap.createScaledBitmap(hiroki1,-(hiroki1.getWidth()),hiroki1.getHeight(),false);
-            hiroki2=Bitmap.createScaledBitmap(hiroki2,-(hiroki2.getWidth()),hiroki2.getHeight(),false);
-            wasMirroredRight=true;
-            wasMirroredLeft=false;
-        }
-        else if((!isRight)&&wasMirroredRight){  //altrimenti l'utente sta premendo per spostarsi verso sinistra e la bitmap è normale la restituisce flippata
-            character=Bitmap.createScaledBitmap(character,-(character.getWidth()),character.getHeight(),false);
-            hiroki1=Bitmap.createScaledBitmap(hiroki1,-(hiroki1.getWidth()),hiroki1.getHeight(),false);
-            hiroki2=Bitmap.createScaledBitmap(hiroki2,-(hiroki2.getWidth()),hiroki2.getHeight(),false);
-            wasMirroredLeft=true;
-            wasMirroredRight=false;
-        }
-        if(isPressed){
-            if(counter==1){
-                counter++;
-                return hiroki1;
-            }
-            if(counter==2){
-                counter++;
-                return hiroki2;
-            }
-            counter--;
-        }
-        return character;
-    }
-
-
-    public float getX(){ // da togliere perche gestito dalla classe character
-        if(isPressed){  //se il background è arrivato alla fine
-            if(isRight&&(x<screenX-character.getWidth()-10*screenRatioX)){ //se l'utente sta premendo verso destra //e se x è minore di questo punto sull'asse delle x
-                x+= (int) (10*screenRatioX); //aumenta ancora la x finchè il personaggio non arriva alla fine dello schermo quindi isEnd diventa false
-            }
-            else if((!isRight)&&(x>10*screenRatioX)){ //se l'utente sta premendo verso sinistra
-                x-= (int) (10*screenRatioX); //diminuisce ancora la x finchè il personaggio non arriva alla fine dello schermo quindi isEnd diventa false
-            }
-        }
-        return x;
-    }
-    /*public void getY(){ // da togliere perche gestito dalla classe character
-        if(isJumping){
-            int i;
-            for(i=0;i<3;i++){
-                charY+=10*screenRatioX;
-            }
-            for(int j=i;j>=0; j--){
-                charY-=10*screenRatioX;
-            }
-        }
-        //return charY;
-    }*/
-
-    public void setBitmapResolution(float density)
-    {
-        if (density >= 4.0)
-        {
-            // qui andranno tutte le bitmap che servono al museo
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-        }else if (density >= 3.0) {
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-        }else if (density >= 2.0) {
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-        }else if (density >= 1.5) {
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-        }else if (density >= 1.0) {
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-
-        }else{ floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);}
-
-    }
 }
