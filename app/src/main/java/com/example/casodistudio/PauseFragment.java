@@ -30,6 +30,7 @@ public class PauseFragment extends Fragment {
             public void onClick(View view) {
                 //ritornare all'activity precedente distruggendo questa
                 getActivity().finish();
+
             }
         });
 

@@ -62,7 +62,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         this.screenX=screenX;
         this.screenY=screenY;
 
-        prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE);
+        prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE); // scrive nel DB del telefono
 
         paint=new Paint();
 

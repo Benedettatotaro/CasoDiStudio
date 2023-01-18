@@ -27,7 +27,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     private int width,height;
     private int widthF,heightF;// altezza e lunghezza del pavimento
     public int x=0;
-    protected int screenX, screenY;
+    public int screenX, screenY;
     private HallActivity hallactivity;
     public static float screenRatioX, screenRatioY;
     public boolean isPlaying;
@@ -50,6 +50,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     private Bitmap gem;
     private int gemTot,marsGem=0;
     Rect rectGround;
+    Character hiroki;
 
 
     public ViewMuseum(HallActivity activity, int screenX, int screenY) {
@@ -70,30 +71,18 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         museum_background = Bitmap.createScaledBitmap(museum_background,screenX,screenY,false); //lo screen x deve essere uguale allo schermo
 
         float density = getResources().getDisplayMetrics().density;
-        if (density >= 4.0)
-        {
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-        }else if (density >= 3.0) {
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-        }else if (density >= 2.0) {
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-        }else if (density >= 1.5) {
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-        }else if (density >= 1.0) {
-            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
-
-        }else{ floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);}
+        setBitmapResolution(density);
 
         isSwitching=false;
 
         floor= BitmapFactory.decodeResource(getResources(), R.drawable.pavimento_museo);
         floor=Bitmap.createScaledBitmap(floor,screenX+2,floor.getHeight(),false);
 
-        character = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki_fermo);
+        character = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki_fermo);// da togliere perche gestito dalla classe character
         hiroki1 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki1);
         hiroki2 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki2);
 
-        character = Bitmap.createScaledBitmap(character,character.getWidth()/7, character.getHeight()/7,false);
+        character = Bitmap.createScaledBitmap(character,character.getWidth()/7, character.getHeight()/7,false);// da togliere perche gestito dalla classe character
         hiroki1 = Bitmap.createScaledBitmap(hiroki1,hiroki1.getWidth()/7, hiroki1.getHeight()/7,false);
         hiroki2 = Bitmap.createScaledBitmap(hiroki2,hiroki2.getWidth()/7, hiroki2.getHeight()/7,false);
         pause=BitmapFactory.decodeResource(getResources(),R.drawable.pause);
@@ -232,7 +221,8 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                    isSwitching=true;
                    //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
                 }
-               if((event.getX()>screenX-roverMars.getWidth()-200*screenRatioX)&&(event.getX()<screenX-200*screenRatioX)&&event.getY()>screenY-floor.getHeight()-roverMars.getHeight()+5&&event.getY()<screenY-floor.getHeight()+5){ //
+               if((event.getX()>screenX-roverMars.getWidth()-200*screenRatioX)&&(event.getX()<screenX-200*screenRatioX)&&event.getY()>screenY-floor.getHeight()-roverMars.getHeight()+5&&event.getY()<screenY-floor.getHeight()+5)
+               {
                    if(!isEndFirstLevel){ //se il primo livello non è ancora finito compare la scritta che il livello è bloccato
                        Toast.makeText(hallactivity, "Livello bloccato", Toast.LENGTH_SHORT).show();
                    }
@@ -273,7 +263,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     }
 
 
-    public Bitmap getCharacter(){
+    public Bitmap getCharacter(){ // da togliere perche gestito dalla classe character
         if(isRight&&wasMirroredLeft){ //se l'utente sta premendo per spostarsi verso destra e la bitmap è flippata restituisce la bitmap normale
             character=Bitmap.createScaledBitmap(character,-(character.getWidth()),character.getHeight(),false);
             hiroki1=Bitmap.createScaledBitmap(hiroki1,-(hiroki1.getWidth()),hiroki1.getHeight(),false);
@@ -303,7 +293,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     }
 
 
-    public float getX(){
+    public float getX(){ // da togliere perche gestito dalla classe character
         if(isPressed){  //se il background è arrivato alla fine
             if(isRight&&(x<screenX-character.getWidth()-10*screenRatioX)){ //se l'utente sta premendo verso destra //e se x è minore di questo punto sull'asse delle x
                 x+= (int) (10*screenRatioX); //aumenta ancora la x finchè il personaggio non arriva alla fine dello schermo quindi isEnd diventa false
@@ -314,7 +304,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         }
         return x;
     }
-    /*public void getY(){
+    /*public void getY(){ // da togliere perche gestito dalla classe character
         if(isJumping){
             int i;
             for(i=0;i<3;i++){
@@ -326,4 +316,23 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         }
         //return charY;
     }*/
+
+    public void setBitmapResolution(float density)
+    {
+        if (density >= 4.0)
+        {
+            // qui andranno tutte le bitmap che servono al museo
+            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
+        }else if (density >= 3.0) {
+            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
+        }else if (density >= 2.0) {
+            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
+        }else if (density >= 1.5) {
+            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
+        }else if (density >= 1.0) {
+            floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);
+
+        }else{ floor= BitmapFactory.decodeResource(getResources(), R.drawable.floor_museo);}
+
+    }
 }
