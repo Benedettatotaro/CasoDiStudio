@@ -13,15 +13,26 @@ import com.example.casodistudio.ingress.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Main main;
+    //private Main main;
+    private String email = (getSharedPreferences("game",MODE_PRIVATE)).getString("email",null);
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if(email != null)
+        {
+            callHall();
+        }
+        else
+        {
+            callFragment();
 
-        main=new Main(MainActivity.this);
+        }
+        //main=new Main(MainActivity.this);
 
     }
 
