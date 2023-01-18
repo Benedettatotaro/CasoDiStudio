@@ -191,7 +191,6 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
     public void resume(){  //quando il gioco riprende viene richiamato
 
-
         isPlaying=true;
         thread=new Thread(this);
         thread.start();  //il run del thread

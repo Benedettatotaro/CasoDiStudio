@@ -166,8 +166,10 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                 }
             }
             canvas.drawBitmap(ship.getShip(),ship.xShip,ship.yShip,paint);
-            for(Bullet bullet:bullets){
-                canvas.drawBitmap(bullet.bullet,bullet.x,bullet.y,paint);
+            if(!bullets.isEmpty()){
+                for(Bullet bullet:bullets){
+                    canvas.drawBitmap(bullet.bullet,bullet.x,bullet.y,paint);
+                }
             }
             if(gameCounter>2166){
                 //TO DO:CALLING VIEW LUNA
