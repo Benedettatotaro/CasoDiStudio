@@ -15,9 +15,10 @@ public class Background {
     public Background(Resources res,int screenX, int screenY,short flagPlanet){
         if(flagPlanet==0) {
             background = BitmapFactory.decodeResource(res, R.drawable.moon_background_grosso);
-            background = Bitmap.createScaledBitmap(background, background.getWidth(), screenY, false);
+            background = Bitmap.createScaledBitmap(background, screenX*5, screenY, false);
         }else{
-            //TO DO fare la bitmap di marte
+            background = BitmapFactory.decodeResource(res, R.drawable.background_mars);
+            background = Bitmap.createScaledBitmap(background, screenX*5, screenY, false);
         }
 
     }

@@ -49,6 +49,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     private Bitmap gem;
     private int gemTot,marsGem=0;
     private Bitmap login;
+    private int distance;
     Rect rectGround;
     Character hiroki;
 
@@ -64,7 +65,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         screenRatioX=1920F/screenX;
         screenRatioY=1080F/screenY;
         paint=new Paint();
-        hiroki = new Character(1,getResources(),screenX,screenY,screenRatioX,screenRatioY);
+        hiroki = new Character(2,getResources(),screenX,screenY,screenRatioX,screenRatioY);
         width = museum_background.getWidth();
         height = museum_background.getHeight();
 
@@ -130,9 +131,10 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         if(getHolder().getSurface().isValid()){  //se il nostro oggetto surface è stato correttamente istanziato
             Canvas canvas=getHolder().lockCanvas(); //blocca il canva per poterlo usare
             canvas.drawBitmap(museum_background,0,0,paint);
-            canvas.drawBitmap(roverMars,screenX-roverMars.getWidth()-200*screenRatioX,screenY-floor.getHeight()-roverMars.getHeight()+5,paint);
+            canvas.drawBitmap(roverMars,canvas.getWidth()/2+300,screenY-floor.getHeight()-roverMars.getHeight()+5,paint);
             canvas.drawBitmap(floor,0,screenY-floor.getHeight(),paint);
-            canvas.drawBitmap(apollo11,200*(int) screenRatioX,0,paint);
+            canvas.drawBitmap(apollo11,canvas.getWidth()/2-300-apollo11.getWidth(),0,paint);
+            distance=canvas.getWidth();
             canvas.drawBitmap(hiroki.charOrientation(),hiroki.charMovement(),screenY-floor.getHeight()-hiroki.getStopAnimation().getHeight(),paint); //screenY-floor.getHeight()-character.getHeight()
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
             canvas.drawBitmap(login,10*screenRatioX,screenY-10*screenRatioY-login.getHeight(),paint);
@@ -162,7 +164,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 staticLayout.draw(canvas);
                 canvas.restore();
                 getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
-                sleep(10000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
+                //sleep(10000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
                 hallactivity.callTravel(c); //passa 0 come flag perché sta andando verso la luna
                 return;
             }
@@ -223,27 +225,27 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                     short flag=0,flagActivity=1;
                     hallactivity.callManager(flag,flagActivity);
                 }
-               if(event.getX()>200*(int) screenRatioX&&event.getX()<200*(int) screenRatioX+apollo11.getWidth()&&event.getY()>0&&event.getY()<apollo11.getHeight()){
+               if(event.getX()>distance/2-200-apollo11.getWidth()&&event.getX()<distance/2-200&&event.getY()>0&&event.getY()<apollo11.getHeight()){
 
                    isSwitching=true;
 
                    //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
                 }
-               if((event.getX()>screenX-roverMars.getWidth()-200*screenRatioX)&&(event.getX()<screenX-200*screenRatioX)&&event.getY()>screenY-floor.getHeight()-roverMars.getHeight()+5&&event.getY()<screenY-floor.getHeight()+5)
+               if((event.getX()>distance/2+200)&&(event.getX()<distance/2+200+roverMars.getWidth())&&event.getY()>screenY-floor.getHeight()-roverMars.getHeight()+5&&event.getY()<screenY-floor.getHeight()+5)
                {
-                   if(!isEndFirstLevel){ //se il primo livello non è ancora finito compare la scritta che il livello è bloccato
+                   /*if(!isEndFirstLevel){ //se il primo livello non è ancora finito compare la scritta che il livello è bloccato
                        Toast.makeText(hallactivity, "Livello bloccato", Toast.LENGTH_SHORT).show();
                    }
-                   else{
-                       if(isEndFirstLevel&&moonGem<50){
+                   else{*/
+                       /*if(isEndFirstLevel&&moonGem<50){
                            Toast.makeText(hallactivity, "Livello bloccato", Toast.LENGTH_SHORT).show();
                            Toast.makeText(hallactivity, "Raccogli 50 gemme per sbloccarlo", Toast.LENGTH_SHORT).show();
-                       }
+                       }*/
                        short c=1; //passa 1 come flag perché sta andando verso Marte
                        hallactivity.callTravel(c);
 
                            //TO DO: IMPOSTARE IL VIAGGIO VERSO LA MARTE
-                   }
+                   //}
 
                }
                 //fare l'if per il tocco sul sulla teca di marte

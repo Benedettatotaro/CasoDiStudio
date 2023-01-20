@@ -37,7 +37,10 @@ public class Ship {
             shipShootPowerup=BitmapFactory.decodeResource(res,R.drawable.ship_shoot_powerup);
         }
         else if(flag==1){
-            //TO DO: CARICARE LA BITMAP DELLA NAVICELLA CON IL ROVER
+            ship= BitmapFactory.decodeResource(res, R.drawable.ship_rover);
+            shipShoot=BitmapFactory.decodeResource(res,R.drawable.ship_rover_shoot);
+            shipPowerup=BitmapFactory.decodeResource(res,R.drawable.ship_rover_powerup);
+            shipShootPowerup=BitmapFactory.decodeResource(res,R.drawable.ship_rover_pwerup_shoot);
         }
 
         ship=Bitmap.createScaledBitmap(ship,ship.getWidth()/7,ship.getHeight()/7,false);

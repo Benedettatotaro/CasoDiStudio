@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NavUtils;
 import androidx.fragment.app.Fragment;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
@@ -46,12 +47,15 @@ public class PauseFragment extends Fragment {
         v.findViewById(R.id.homeCtrl).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(flag==0){   //la pausa è stata chiamata dall'activity viaggio
+                if(flag==0||flag==2){   //la pausa è stata chiamata dall'activity viaggio o uno dei pianeti
                     Intent i=new Intent(getActivity(),HallActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
+                    //getActivity().onBackPressed(); //va indietro nella pila di chiamate
+                    getActivity().finish(); //e chiude l'activity manager
                 }
                 else if(flag==1){  //la pausa è stata chiamata dall'activity museo
+                    NavUtils.navigateUpFromSameTask(getActivity());
                     getActivity().finish();
                 }
             }

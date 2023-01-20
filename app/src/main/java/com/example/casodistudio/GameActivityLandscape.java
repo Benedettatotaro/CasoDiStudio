@@ -2,6 +2,7 @@ package com.example.casodistudio;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -33,7 +34,7 @@ public class GameActivityLandscape extends AppCompatActivity {
 
         //e le passa al costruttore della view
 
-        viewLandscape= new ViewLandscape(GameActivityLandscape.this,flagPlanet,point.x,point.y);
+        viewLandscape= new ViewLandscape(GameActivityLandscape.this,flagPlanet,point.y,point.x);
         setContentView(viewLandscape);
 
     }
@@ -48,6 +49,15 @@ public class GameActivityLandscape extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         viewLandscape.pause();
+    }
+
+    public void callManager(short flag, short flagActivity){
+        Bundle bundle=new Bundle(2);
+        bundle.putShort("flag", flag); //setta il flag nel boundle uguale a 0 perchè sta chiamando il fragment di pausa
+        bundle.putShort("flagActivity",flagActivity);
+        Intent i = new Intent(GameActivityLandscape.this, ManagerActivity.class);
+        i.putExtras(bundle);
+        this.startActivity(i);
     }
 
 }

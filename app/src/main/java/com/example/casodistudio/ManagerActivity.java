@@ -23,7 +23,7 @@ public class ManagerActivity extends AppCompatActivity {
             if (flagActivity == 0) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
-            else if(flagActivity==1){
+            else if(flagActivity==1||flag==3){
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
             FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
@@ -32,8 +32,6 @@ public class ManagerActivity extends AppCompatActivity {
             pauseFragmentFlag.putShort("flagActivity", flag);
             fragment.setArguments(pauseFragmentFlag);
             ft.replace(R.id.container_manager,fragment);
-
-
             ft.commit();
         }
         else if(flag==1){  //altrimenti chiama il fragment delle classifiche

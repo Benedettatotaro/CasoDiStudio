@@ -25,6 +25,8 @@ public class HallActivity extends AppCompatActivity {
         //imposta lo schermo in full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        getOnBackPressedDispatcher();
+
         //ottiene le dimensioni dello schermo a run time
         Point point=new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
