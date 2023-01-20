@@ -205,7 +205,7 @@ public class ViewLandscape extends SurfaceView implements Runnable {
             }
             if(Rect.intersects(character.collisionShape(),alien.collisionShape())){
                 //se l'astronuta si scontra con uno degli alieni
-               // isGameOver=true; //perdi
+                isGameOver=true; //perdi
             }
         }
         //rimuove tutti gli alieni usciti dallo schermo
@@ -241,7 +241,7 @@ public class ViewLandscape extends SurfaceView implements Runnable {
         }
 
         if(counter==10&&character.y>=screenY-floors[0].floor.getHeight()-character.getStopAnimation().getHeight()+1){  //se non è più su nessun pavimento
-            //isGameOver=true; //perdi
+            isGameOver=true; //perdi
         }
 
         if(character.y<0&&!character.isPoweringUp){
@@ -275,7 +275,6 @@ public class ViewLandscape extends SurfaceView implements Runnable {
     }
 
 
-
     private void draw(){
         if(getHolder().getSurface().isValid()){
             Canvas canvas = getHolder().lockCanvas();
@@ -295,8 +294,6 @@ public class ViewLandscape extends SurfaceView implements Runnable {
             if(powerUpIsOnTheScreen){
                 canvas.drawBitmap(powerup,xPowerup,yPowerup,paint);
             }
-
-
 
             canvas.drawBitmap(buttonJump,10*screenRatioX,screenY-10*screenRatioX-buttonJump.getHeight(),paint);
             canvas.drawBitmap(buttonLeft,screenX-10*screenRatioX-buttonLeft.getWidth(),screenY-10*screenRatioX-buttonLeft.getHeight(),paint);
