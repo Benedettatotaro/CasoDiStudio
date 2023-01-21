@@ -1,21 +1,34 @@
 package com.example.casodistudio.game.gameviews.LViews;
+import static android.content.ContentValues.TAG;
+
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.net.ConnectivityManager;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.casodistudio.HallActivity;
 import com.example.casodistudio.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Map;
 
 
 public class ViewMuseum extends SurfaceView implements Runnable {
@@ -24,40 +37,88 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     private Bitmap museum_background = BitmapFactory.decodeResource(getResources(), R.drawable.background_museo);
     private Bitmap floor;
     private Bitmap pause,apollo11,roverMars;
-    private int width,height;
-    private int widthF,heightF;// altezza e lunghezza del pavimento
+
     public int x=0;
     public int screenX, screenY;
+    int distance;
     private HallActivity hallactivity;
     public static float screenRatioX, screenRatioY;
     public boolean isPlaying;
     private Paint paint;
-    private Bitmap character; // hiroki fermo
-    private Bitmap hiroki1;
-    private Bitmap hiroki2;
-    boolean isPressed=false;
-    boolean isRight=true;
-    boolean isJumping=false;
-    boolean wasMirroredLeft=false,wasMirroredRight=true;
     boolean isSwitching;
-    boolean isEndFirstLevel=false;
-    boolean isEndSecondLevel=false;
     private Bitmap interfaceBackground;
     private SharedPreferences prefs;
-    private float charX, charY; // Dove viene spawnato il personaggio
-    private int moonGem;
     private Bitmap gem;
-    private int gemTot,marsGem=0;
+    private long gemTot;
     private Bitmap login;
-    private int distance;
     Rect rectGround;
     Character hiroki;
+    FirebaseFirestore db;
+    private String email;
+    Toast toast;
 
 
     public ViewMuseum(HallActivity activity, int screenX, int screenY) {
         super(activity);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE);
+
+
+        //prefs.edit().clear().commit(); per pulire il prefs
+
+
+        email = prefs.getString("email", "").toString();
+
+
+
+
+        if( prefs.getString("email", "") != "")
+        {
+            if(connectivityManager.getActiveNetwork() != null )
+            {
+
+                db = FirebaseFirestore.getInstance();
+                Map<String, Object> appoggio = (Map<String, Object>) prefs.getAll();
+                appoggio.remove("email","");
+                db.collection("gems").document(prefs.getString("email", "")).set(appoggio).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                         toast = Toast.makeText(getContext(), "Failed to update your data", Toast.LENGTH_SHORT);
+                         toast.show();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        toast = Toast.makeText(getContext(), "your account has been updated correctly", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                });
+
+
+
+            }else
+            {
+                toast = Toast.makeText(getContext(), "You are playing offline", Toast.LENGTH_SHORT);
+                toast.show();
+
+            }
+
+
+        }else
+        {
+             toast = Toast.makeText(getContext(), "You are a guess", Toast.LENGTH_SHORT);
+            toast.show();
+
+
+        }
+
+        gemTot = prefs.getLong("moonGem", 0) + prefs.getLong("marsGem", 0);
+
+
+
 
         this.hallactivity=activity;
         this.screenX=screenX;
@@ -66,8 +127,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         screenRatioY=1080F/screenY;
         paint=new Paint();
         hiroki = new Character(2,getResources(),screenX,screenY,screenRatioX,screenRatioY);
-        width = museum_background.getWidth();
-        height = museum_background.getHeight();
+
 
         museum_background = Bitmap.createScaledBitmap(museum_background,screenX,screenY,false); //lo screen x deve essere uguale allo schermo
 
@@ -79,13 +139,6 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         floor= BitmapFactory.decodeResource(getResources(), R.drawable.pavimento_museo);
         floor=Bitmap.createScaledBitmap(floor,screenX+2,floor.getHeight(),false);
 
-        //character = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki_fermo);// da togliere perche gestito dalla classe character
-        //hiroki1 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki1);
-        //hiroki2 = BitmapFactory.decodeResource(getResources(), R.drawable.hirooki2);
-
-        //character = Bitmap.createScaledBitmap(character,character.getWidth()/7, character.getHeight()/7,false);// da togliere perche gestito dalla classe character
-        //hiroki1 = Bitmap.createScaledBitmap(hiroki1,hiroki1.getWidth()/7, hiroki1.getHeight()/7,false);
-        //hiroki2 = Bitmap.createScaledBitmap(hiroki2,hiroki2.getWidth()/7, hiroki2.getHeight()/7,false);
         pause=BitmapFactory.decodeResource(getResources(),R.drawable.pause);
         pause=Bitmap.createScaledBitmap(pause,pause.getWidth()/45,pause.getHeight()/45,false);
 
@@ -103,28 +156,14 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         gem=BitmapFactory.decodeResource(getResources(),R.drawable.gem);
         gem=Bitmap.createScaledBitmap(gem,gem.getWidth()/2,gem.getHeight()/2,false);
 
-        widthF= (int) (floor.getWidth() * screenRatioX);
-        heightF=(int)(floor.getHeight() * screenRatioY);
 
-        width*=(int) Resources.getSystem().getDisplayMetrics().density;
-        height*=(int) Resources.getSystem().getDisplayMetrics().density;
 
         //charY= screenY - floor.getHeight() - character.getHeight();
         //charX = 60;
         rectGround = new Rect(0,screenX-floor.getHeight(),screenX, screenY);
     }
 
-    private void updateGem(){
-        moonGem=prefs.getInt("moonGem",0);
 
-        if(moonGem<50&&!prefs.getBoolean("moonFinished",false)){
-            isEndFirstLevel=false;
-        }
-        else{
-            isEndFirstLevel=true;
-        }
-        gemTot=moonGem+marsGem;
-    }
 
 
     protected void draw(){
@@ -134,7 +173,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
             canvas.drawBitmap(roverMars,canvas.getWidth()/2+300,screenY-floor.getHeight()-roverMars.getHeight()+5,paint);
             canvas.drawBitmap(floor,0,screenY-floor.getHeight(),paint);
             canvas.drawBitmap(apollo11,canvas.getWidth()/2-300-apollo11.getWidth(),0,paint);
-            distance=canvas.getWidth();
+            distance = canvas.getWidth();
             canvas.drawBitmap(hiroki.charOrientation(),hiroki.charMovement(),screenY-floor.getHeight()-hiroki.getStopAnimation().getHeight(),paint); //screenY-floor.getHeight()-character.getHeight()
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
             canvas.drawBitmap(login,10*screenRatioX,screenY-10*screenRatioY-login.getHeight(),paint);
@@ -148,23 +187,27 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 canvas.drawBitmap(interfaceBackground,0,0,paint);
                 TextPaint textPaint = new TextPaint();
                 //textPaint.setTextAlign(Paint.Align.CENTER);
-                int xPos = (canvas.getWidth() / 2);
-                int yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;
+
                 textPaint.setColor(Color.WHITE);
-                textPaint.setTextSize(30);
+                textPaint.setTextSize(16 * getResources().getDisplayMetrics().density);
                 String message="Durante gli anni della guerra fredda, tra stati uniti e " +  //da aggiustare FA SCHIFO!!!!
                         "unione sovietica uno dei tanti obiettivi contesi era il primo viaggio con equipaggio verso la Luna. " +
                         "Il giorno 20 luglio 1969 tre astronauti statunitensi sono partiti per la missione spaziale Apollo 11 per poi " +
                         "atterrare sul suolo lunare il giorno dopo. Aiuta la navicella a raggiungere la luna come l’equipaggio fece quel giorno.";
-                StaticLayout.Builder builder=StaticLayout.Builder.obtain(message,0,message.length(), textPaint,500)
+                StaticLayout.Builder builder=StaticLayout.Builder.obtain(message,0,message.length(), textPaint,700)
                         .setAlignment(Layout.Alignment.ALIGN_NORMAL);
+
                 StaticLayout staticLayout=builder.build();
+
+
+                int xPos = (canvas.getWidth() / 2) - (staticLayout.getWidth()/2);
+                int yPos = (int) ((canvas.getHeight() / 2) - (staticLayout.getHeight()/2));
                 canvas.save();
-                canvas.translate(xPos-getPaddingLeft(), yPos-getPaddingTop()-staticLayout.getHeight());
+                canvas.translate(xPos, yPos);
                 staticLayout.draw(canvas);
                 canvas.restore();
                 getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
-                //sleep(10000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
+                sleep(7000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
                 hallactivity.callTravel(c); //passa 0 come flag perché sta andando verso la luna
                 return;
             }
@@ -175,7 +218,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     @Override
     public void run() {
         while (isPlaying){
-            updateGem();
+
             draw();
             sleep(36); //setta la pausa del thread ogni 36 milli secondi così che il gioco runni a 36fps
         }
@@ -217,66 +260,61 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                    if(event.getX()>10*screenRatioX&&event.getX()<10*screenRatioX+login.getWidth()&&event.getY()<screenY-10*screenRatioX&&event.getY()>screenY-10*screenRatioY-login.getHeight()){
-                        hallactivity.callLogin();
-                    }
+                if(event.getX()>10*screenRatioX&&event.getX()<10*screenRatioX+login.getWidth()&&event.getY()<screenY-10*screenRatioX&&event.getY()>screenY-10*screenRatioY-login.getHeight()){
+                    hallactivity.callLogin();
+                }
                 if(event.getX()>screenX-pause.getWidth()-10*screenRatioX&&event.getY()<10*screenRatioX+pause.getHeight()){
                     //se il tocco avviene nel quadrato in cui si trova il bottone di pausa
                     short flag=0,flagActivity=1;
                     hallactivity.callManager(flag,flagActivity);
                 }
-               if(event.getX()>distance/2-200-apollo11.getWidth()&&event.getX()<distance/2-200&&event.getY()>0&&event.getY()<apollo11.getHeight()){
+                if(event.getX()>distance/2-200-apollo11.getWidth()&&event.getX()<distance/2-200&&event.getY()>0&&event.getY()<apollo11.getHeight()){
 
-                   isSwitching=true;
+                    isSwitching=true;
 
-                   //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
+                    //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
                 }
-               if((event.getX()>distance/2+200)&&(event.getX()<distance/2+200+roverMars.getWidth())&&event.getY()>screenY-floor.getHeight()-roverMars.getHeight()+5&&event.getY()<screenY-floor.getHeight()+5)
-               {
-                   /*if(!isEndFirstLevel){ //se il primo livello non è ancora finito compare la scritta che il livello è bloccato
-                       Toast.makeText(hallactivity, "Livello bloccato", Toast.LENGTH_SHORT).show();
-                   }
-                   else{*/
-                       /*if(isEndFirstLevel&&moonGem<50){
-                           Toast.makeText(hallactivity, "Livello bloccato", Toast.LENGTH_SHORT).show();
-                           Toast.makeText(hallactivity, "Raccogli 50 gemme per sbloccarlo", Toast.LENGTH_SHORT).show();
-                       }*/
-                       short c=1; //passa 1 come flag perché sta andando verso Marte
-                       hallactivity.callTravel(c);
+                if((event.getX()>distance/2+200)&&(event.getX()<distance/2+200+roverMars.getWidth())&&event.getY()>screenY-floor.getHeight()-roverMars.getHeight()+5&&event.getY()<screenY-floor.getHeight()+5)
+                {
+                    if( gemTot>= 50)
+                    {
 
-                           //TO DO: IMPOSTARE IL VIAGGIO VERSO LA MARTE
-                   //}
+                        short c=1; //passa 1 come flag perché sta andando verso Marte
+                        hallactivity.callTravel(c);
 
-               }
-                //fare l'if per il tocco sul sulla teca di marte
-                hiroki.setIsJumping(true);
-               // isJumping=true;
+                    }else
+                    {
+
+                        toast = Toast.makeText(getContext(), "You have to collect at least 50 gem to unlock this level", Toast.LENGTH_SHORT);
+                        toast.show();
+
+                    }
+
+
+
+                }
+
+
                 break;
             case MotionEvent.AXIS_PRESSURE: //se l'utente sta tenendo premuto lo schermo
                 if(event.getX()<screenX/2) {
                     hiroki.setIsPressed(true);
                     hiroki.setIsRight(false);
-                    //isPressed=true;
-                   // isRight=false;  //imposta che il personaggio deve muoversi verso sinistra
                     return true;
                 }
                 else if(event.getX()>screenX/2){//quando questo succede il tocco arriva dalla parte destra
                     hiroki.setIsPressed(true);
                     hiroki.setIsRight(true);
-                   // isPressed=true;
-                    //isRight=true;  //imposta che il personaggio deve muoversi verso destra
                     return true;
                 }
             case MotionEvent.ACTION_UP:     //se l'utente ha lasciato lo schermo
                 hiroki.setIsPressed(false);
-
-                //isJumping=false;
-                //isPressed=false;
                 break;
 
         }
 
         return true;
     }
+
 
 }

@@ -1,8 +1,11 @@
 package com.example.casodistudio.ingress;
 
+
+
 import androidx.annotation.RequiresApi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
@@ -15,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +29,24 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.casodistudio.HallActivity;
 import com.example.casodistudio.MainActivity;
 import com.example.casodistudio.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SingUpFragment extends Fragment {
@@ -41,11 +57,14 @@ public class SingUpFragment extends Fragment {
     private EditText surname;
     private EditText email;
     private EditText password;
-    private EditText conPassword;
+    private EditText checkPassword;
     private Button singupBtn;
+    private SharedPreferences prefs;
+    SharedPreferences.Editor editor;
+    private FirebaseAuth auth;
+    FirebaseFirestore db;
+    Toast toast;
 
-
-    //DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReferenceFromUrl("https://casodistudio-dcae5-default-rtdb.firebaseio.com/");
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,81 +75,108 @@ public class SingUpFragment extends Fragment {
         surname=v.findViewById(R.id.surname);
         email=v.findViewById(R.id.email);
         password=v.findViewById(R.id.password);
-        conPassword=v.findViewById(R.id.conPassword);
+        checkPassword=v.findViewById(R.id.conPassword);
         singupBtn=v.findViewById(R.id.singupBtn);
 
-            singupBtn.setOnClickListener(view -> {
-                String nameTxt=name.getText().toString();
-                String surnameTxt=surname.getText().toString();
-                String emailtxt=email.getText().toString();
-                String passwordTxt=password.getText().toString();
-                String conPasswordTxt=conPassword.getText().toString();
-                Toast toast;
 
-                if (nameTxt.isEmpty()||surnameTxt.isEmpty()||emailtxt.isEmpty()||passwordTxt.isEmpty()||conPasswordTxt.isEmpty()){
 
-                    toast=Toast.makeText(getActivity(), "compila tutti i campi", Toast.LENGTH_SHORT);
+        prefs=getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
+
+
+
+        singupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String txt_email = email.getText().toString();
+                String txt_password = password.getText().toString();
+                String txt_name = name.getText().toString();
+                String txt_surname = surname.getText().toString();
+                String txt_checkPassword = checkPassword.getText().toString();
+                auth = FirebaseAuth.getInstance();
+
+                if(TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_email))
+                {
+                    toast=Toast.makeText(getActivity(), "Fill all the credentials to login ", Toast.LENGTH_SHORT);
+                    toast.show();
+                }else if (txt_password.length() < 6){
+                    toast=Toast.makeText(getActivity(), "password too short, min.6 character", Toast.LENGTH_SHORT);
                     toast.show();
 
-                }
-                /*else if(!Patterns.EMAIL_ADDRESS.matcher(emailtxt).matches()){
-
-                    toast=Toast.makeText(getActivity(), "inserisci un email valida", Toast.LENGTH_SHORT);
+                } else if(txt_password.compareTo(txt_checkPassword) != 0  ) // sono uguali
+                {
+                    toast=Toast.makeText(getActivity(), "password and confirm password are different", Toast.LENGTH_SHORT);
                     toast.show();
+                }else {
 
-                }*/
-                else if(!passwordTxt.equals(conPasswordTxt)){ //se le due password non coincidono
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                    toast=Toast.makeText(getActivity(), "le due password devono coincidere", Toast.LENGTH_SHORT);
-                    toast.show();
+                    if(connectivityManager.getActiveNetwork() != null )
+                    {
+                        registerUser(txt_email,txt_password);
 
-                }
-                else{
 
-                    //controlla se il device è connesso ad internet
-                    ConnectivityManager connectivityManager =  (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-                    /*if(connectivityManager.getActiveNetwork()==null){  //se il metodo get Active NetWork ritorna null vuol dire che il dispositivo non è connesso ad internet
-                        Toast.makeText(getActivity(), "Il dispositivo non è connesso ad internet", Toast.LENGTH_SHORT).show();
+                    }else
+                    {
+                        toast=Toast.makeText(getActivity(), "check your connection and retry", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
-
-                    else {  //se il dispositivo è connesso ad internet invia dati al db
-
-                        databaseReference.child("user").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                //controlla se l'email è già presente nel db
-                                if (snapshot.hasChild(emailtxt)) {
-                                    Toast toast = Toast.makeText(getActivity(), "email già registrata", Toast.LENGTH_SHORT);
-                                    toast.show();
-                                } else {
-                                    //usando l'email come chiave primaria del db inserisco tutti i campi
-                                    databaseReference.child("user").child(emailtxt).child("name").setValue(nameTxt);
-                                    databaseReference.child("user").child(emailtxt).child("surname").setValue(surnameTxt);
-                                    databaseReference.child("user").child(emailtxt).child("password").setValue(passwordTxt);
-
-                                    //se tutto va a buon fine compare un messaggio di avvenuta registrazione
-                                    Toast toast = Toast.makeText(getActivity(), "registrazione avvenuta con successo", Toast.LENGTH_SHORT);
-                                    toast.show();
-
-                                    //e chiede all'utente di loggarsi caricando il fragment del login
-                                AppCompatActivity activity = (MainActivity) getActivity();
-                                FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.container, new LoginFragment());
-                                ft.addToBackStack(null);
-                                ft.commit();
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                    }*/
                 }
-            });
+
+
+
+
+            }
+        });
+
 
         return v;
+    }
+
+    private void registerUser(String txt_email, String txt_password) {
+        auth.createUserWithEmailAndPassword(txt_email,txt_password).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful())
+                {
+                    toast.makeText(getActivity(), "Registering user successful",Toast.LENGTH_SHORT).show();
+
+                    editor= prefs.edit();
+                    editor.putString("email", txt_email);
+                    editor.putLong("moonGem", 0);
+                    editor.putLong("marsGem", 0);
+                    editor.commit();
+
+                    Log.d("1",prefs.getAll().toString());
+                    db = FirebaseFirestore.getInstance();
+
+
+                    Map<String, Integer> gems = new HashMap<>();
+                    gems.put("moonGem", 0);
+                    gems.put("marsGem", 0);
+
+                    db.collection("gems").document(txt_email).set(gems);
+                    Intent i = new Intent(getActivity(), HallActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+
+                }else
+                {
+                    toast.makeText(getActivity(), "Registration failed",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+
+
+    }
+
+    public boolean internetIsConnected() {
+        try {
+            String command = "ping -c 1 google.com";
+            return (Runtime.getRuntime().exec(command).waitFor() == 0);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

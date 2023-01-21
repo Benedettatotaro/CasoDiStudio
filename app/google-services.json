@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "980357623960",
-    "project_id": "loginregister-d0f2d",
-    "storage_bucket": "loginregister-d0f2d.appspot.com"
+    "project_number": "356539602648",
+    "project_id": "casodistudio-403ae",
+    "storage_bucket": "casodistudio-403ae.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:980357623960:android:452828da54158cd4e5a0ed",
+        "mobilesdk_app_id": "1:356539602648:android:7d14138d6668258ce829ad",
         "android_client_info": {
           "package_name": "com.example.casodistudio"
         }
       },
       "oauth_client": [
         {
-          "client_id": "980357623960-1bksiobd5jl39vahjsh8avotb87oj8ma.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.casodistudio",
-            "certificate_hash": "0c8ea2f1aaaa5ec9e6ce938633d9e28ca6d9038a"
-          }
-        },
-        {
-          "client_id": "980357623960-dlff4b615ucbpj3ubjhlik6j3sh8qa9v.apps.googleusercontent.com",
+          "client_id": "356539602648-p1eu13576kc1d8h0s3br8820s744k185.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDW-r42_yVNXCCE79ASfXMAKT-bWgYOVgA"
+          "current_key": "AIzaSyC_sU90BHCbaYrVKIFFCR0UE_pTabSbN3U"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "980357623960-dlff4b615ucbpj3ubjhlik6j3sh8qa9v.apps.googleusercontent.com",
+              "client_id": "356539602648-p1eu13576kc1d8h0s3br8820s744k185.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

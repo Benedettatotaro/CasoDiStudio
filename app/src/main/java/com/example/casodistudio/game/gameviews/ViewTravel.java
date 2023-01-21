@@ -16,6 +16,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.widget.Toast;
@@ -46,7 +47,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     boolean isGameOver;
     private Bitmap pause;
     public int gameCounter=0;
-    public int gemCounter=0;
+    public int gemCounter=10;
     private Paint text;
     private int enemyCounter;
     public Background background_1,background_2;
@@ -82,7 +83,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
         background_2.y=-screenY;  //inizializza il secondo background sopra il primo
 
-        ship=new Ship(getResources(),screenX,screenY,flag);
+        ship=new Ship(getResources(),screenX,screenY,flagPlanet);
 
         bullets=new ArrayList<>();
 
@@ -165,12 +166,28 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
 
             if(gameCounter>5){  //se il gioco finisce salva i dati delle gemme
-                //SCRIVERE SE E' LOGGATO E IN QUEL CASO SALVARE I DATI E SE è CONNESSO AD INTERNET SCRIVERLI ANCHE SU FIREBASE
                 SharedPreferences.Editor editor= prefs.edit();
-                editor.putInt("moonGem",gemCounter);
-                editor.putBoolean("moonFinished",true); //imposta che il livello della luna è finito
-                editor.apply();
+                Log.d("flag",prefs.getAll().toString());
+                if(prefs.getString("email", "") != "")
+                {
+                 if(flagPlanet == 0) // luna
+                 {
+                     long appoggio = prefs.getLong("moonGem",0);
+                     appoggio += gemCounter;
+                     editor.putLong("moonGem", appoggio);
+                     editor.commit();
+
+                 }else// marte
+                 {
+                     long appoggio = prefs.getLong("marsGem",0);
+                     appoggio += gemCounter;
+                     editor.putLong("marsGem", appoggio);
+                     editor.commit();
+                 }
+
+                }
                 //sleep(10000);
+                Log.d("flag",prefs.getAll().toString());
                 getHolder().unlockCanvasAndPost(canvas);
                 gameActivityPortrait.callPlanet(flagPlanet);
                 return;

@@ -5,6 +5,7 @@ import static com.example.casodistudio.game.gameviews.LViews.ViewMuseum.screenRa
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -59,6 +60,8 @@ public class ViewLandscape extends SurfaceView implements Runnable {
     private boolean isEndBgRight;
     private boolean flagIsOnTheScreen=false;
     private Paint text;
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
 
     public ViewLandscape(GameActivityLandscape gameActivityLandscape,short flag,int screenY,int screenX) {
 
@@ -323,7 +326,25 @@ public class ViewLandscape extends SurfaceView implements Runnable {
                 canvas.drawText("Hai vinto!", xPos,yPos,textPaint);
                 getHolder().unlockCanvasAndPost(canvas);
                 waitBeforeExiting();
-                return;
+                long appoggio;
+                if(flagPlanet == 0) // luna
+                {
+                    appoggio = prefs.getLong("moonGem", 0);
+                    appoggio =+ gemCounter;
+                    editor.putLong("moonGem", appoggio);
+                    editor.commit();
+
+                }else // marte
+                {
+                    appoggio = prefs.getLong("marsGem", 0);
+                    appoggio =+ gemCounter;
+                    editor.putLong("marsGem", appoggio);
+                    editor.commit();
+                }
+                Intent i = new Intent(getContext(), HallActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(i);
+
             }
 
             if(isGameOver){ //se perdi

@@ -1,5 +1,7 @@
 package com.example.casodistudio.ingress;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +11,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +23,22 @@ import android.widget.Toast;
 
 import com.example.casodistudio.HallActivity;
 import com.example.casodistudio.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Map;
 
 public class LoginFragment extends Fragment {
 
@@ -31,108 +46,115 @@ public class LoginFragment extends Fragment {
     private EditText password;
     private Button loginBtn;
     private SharedPreferences prefs;
+    private SharedPreferences.Editor editor;
+    private FirebaseAuth auth;
+    DocumentReference docRef;
+    private Toast toast;
+    private int dbMoonGem;
+    private int dbMarsGem;
 
-    //oggetto che si collega al database creato su Firebase
-    DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReferenceFromUrl("https://loginregister-d0f2d-default-rtdb.firebaseio.com/");
+
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_login, container, false);
-
         prefs=getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
 
-        if(databaseReference==null){
-            Toast toast=Toast.makeText(getActivity(), "ehm c'è qualquadra che non cosa", Toast.LENGTH_SHORT);
-            toast.show();
+        editor= prefs.edit();
+        auth = FirebaseAuth.getInstance();
+        email=v.findViewById(R.id.email);
+        password=v.findViewById(R.id.password);
+        loginBtn=v.findViewById(R.id.loginBtn);
+
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String txt_email = email.getText().toString();
+                String txt_password = password.getText().toString();
+
+
+                if(TextUtils.isEmpty(txt_email)  || TextUtils.isEmpty(txt_password)){
+                    Toast toast=Toast.makeText(getActivity(), "Fill all the credentials to login ", Toast.LENGTH_SHORT);
+                    toast.show();
+                }else
+                {
+                    loginUser(txt_email,txt_password);
+
+                }
+
+            }
+        });
+
+       return v;
+    }
+
+    private void loginUser(String email, String password) {
+
+
+        if(auth.getCurrentUser() != null)
+        {
+            FirebaseAuth.getInstance().signOut();
         }
-        else{
-            email=v.findViewById(R.id.email);
-            password=v.findViewById(R.id.password);
-            loginBtn=v.findViewById(R.id.loginBtn);
+        auth.signInWithEmailAndPassword(email,password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
 
-            loginBtn.setOnClickListener(view -> {
 
-                String emailtxt=email.getText().toString();
-                String passwordtxt=password.getText().toString();
+                toast=Toast.makeText(getActivity(), "login successful ", Toast.LENGTH_SHORT);
 
-                if(emailtxt.isEmpty()){ //se il campo email è vuoto
 
-                    //richiama l'activity chiamante e gli fa stampare la stringa per inserire l'email
+                docRef = FirebaseFirestore.getInstance().collection("gems").document(email);
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful())
+                        {
+                            DocumentSnapshot doc = task.getResult();
+                            if(doc.exists())
+                            {
+                                Map<String, Object> localGems = doc.getData();
+                                editor.putString("email", email);
+                                editor.putLong("moonGem", (long )localGems.get("moonGem"));
+                                editor.putLong("marsGem", (long)localGems.get("marsGem"));
+                                editor.commit();
+                                Intent i = new Intent(getActivity(), HallActivity.class);
+                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(i);
 
-                    Toast toast=Toast.makeText(getActivity(), "inserisci l'email", Toast.LENGTH_SHORT);
-                    toast.show();
-
-                }
-
-                else if(passwordtxt.isEmpty()){ //se il campo passoword è vuoto
-
-                    //richiama l'activity chiamante e gli fa stampare la stringa per inserire l'email
-
-                    Toast toast=Toast.makeText(getActivity(), "inserisci la password", Toast.LENGTH_SHORT);
-                    toast.show();
-
-                }
-                //funziona ma non si può inserire l'email nel db perché crasha
-            /*else if(!(Patterns.EMAIL_ADDRESS.matcher(emailtxt).matches())){  //se è stata inserita un email invalida
-
-                Toast toast=Toast.makeText(getActivity(), "inserisci un email valida", Toast.LENGTH_SHORT);
-                toast.show();  //stampa il messaggio di errore
-
-            }*/
-
-                else{ //altrimenti se entrambi i campi sono pieni e validi
-
-                    SharedPreferences.Editor editor= prefs.edit();
-                    editor.putString("email",emailtxt); //salva l'email dell'utente nel device
-                    editor.apply();
-
-                    //controlla se il device è connesso ad internet
-                    ConnectivityManager connectivityManager =  (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-                    if(connectivityManager.getActiveNetwork()==null){  //se il metodo get Active NetWork ritorna null vuol dire che il dispositivo non è connesso ad internet
-                        Toast.makeText(getActivity(), "Il dispositivo non è connesso ad internet", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        //se il dispositivo è connesso ad internet invia dati al database
-                        databaseReference.child("user").addListenerForSingleValueEvent(new ValueEventListener() {
-
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                //controlla se esiste un account con questa email
-                                if (snapshot.hasChild(emailtxt)) {
-
-                                    //ora prende la password dal db
-                                    final String passworddb = snapshot.child(emailtxt).child("password").getValue(String.class);
-                                    if (passworddb.equals(passwordtxt)) {  //e controlla se la password inserita dall'utente è uguale a quella presente nel db
-                                        Toast.makeText(getActivity(), "login avvenuto con successo", Toast.LENGTH_SHORT).show();
-                                        //visto che il login è avvenuto con successo parte l'activity hall per il museo
-                                        startActivity(new Intent(getActivity(), HallActivity.class)); //apre l'activity landscape
-                                        getActivity().finish(); //e chiude quella in cui è contenuto il fragment
-
-                                    } else {
-                                        Toast.makeText(getActivity(), "password errata", Toast.LENGTH_SHORT).show();
-                                    }
-                                } else {
-                                    Toast.makeText(getActivity(), "non esiste un account legato a questa email", Toast.LENGTH_SHORT).show();
-                                }
 
                             }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
 
-                            }
-                        });
+                        }
                     }
-                }
+
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        toast=Toast.makeText(getActivity(), "doc error, retry ", Toast.LENGTH_SHORT);
+                        toast.show();
+
+                    }
+                });
 
 
-            });
-        }
 
-        return v;
+
+            }
+
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                toast=Toast.makeText(getActivity(), "login failed, retry ", Toast.LENGTH_SHORT);
+                toast.show();
+                Log.w(TAG ,"login failed",e);
+
+
+            }
+        });
+
     }
 }
