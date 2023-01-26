@@ -35,6 +35,7 @@ public class ManagerActivity extends AppCompatActivity {
             ft.commit();
         }
         else if(flag==1){  //altrimenti chiama il fragment delle classifiche
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.container_manager, new RankingFragment());
             ft.commit();

@@ -37,7 +37,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
     private Bitmap museum_background = BitmapFactory.decodeResource(getResources(), R.drawable.background_museo);
     private Bitmap floor;
     private Bitmap pause,apollo11,roverMars;
-
+    private Bitmap ranking;
     public int x=0;
     public int screenX, screenY;
     int distance;
@@ -156,6 +156,8 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         gem=BitmapFactory.decodeResource(getResources(),R.drawable.gem);
         gem=Bitmap.createScaledBitmap(gem,gem.getWidth()/2,gem.getHeight()/2,false);
 
+        ranking = BitmapFactory.decodeResource(getResources(), R.drawable.ranking);
+        ranking = Bitmap.createScaledBitmap(ranking,ranking.getWidth()/10,ranking.getHeight()/10,false);
 
 
         //charY= screenY - floor.getHeight() - character.getHeight();
@@ -175,6 +177,8 @@ public class ViewMuseum extends SurfaceView implements Runnable {
             canvas.drawBitmap(apollo11,canvas.getWidth()/2-300-apollo11.getWidth(),0,paint);
             distance = canvas.getWidth();
             canvas.drawBitmap(hiroki.charOrientation(),hiroki.charMovement(),screenY-floor.getHeight()-hiroki.getStopAnimation().getHeight(),paint); //screenY-floor.getHeight()-character.getHeight()
+            //canvas.drawBitmap(ranking,screenX-ranking.getWidth()-10*screenRatioX,10*screenRatioY,paint);
+            canvas.drawBitmap(ranking,canvas.getWidth()/2-ranking.getWidth()/2,0,paint);
             canvas.drawBitmap(pause,screenX-pause.getWidth()-10*screenRatioX,10*screenRatioX,paint);
             canvas.drawBitmap(login,10*screenRatioX,screenY-10*screenRatioY-login.getHeight(),paint);
             canvas.drawBitmap(gem,10*screenRatioX,10*screenRatioY,paint);
@@ -268,11 +272,22 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                     short flag=0,flagActivity=1;
                     hallactivity.callManager(flag,flagActivity);
                 }
+                if((distance/2-ranking.getWidth()/2 < event.getX() && event.getX() < distance/2 + ranking.getWidth()/2)
+                        &&
+                     event.getY() < ranking.getHeight())
+                {
+                    short flag=1,flagActivity=1;// flagActivity in questo caso e inutile
+                    hallactivity.callManager(flag,flagActivity);
+                    Toast.makeText(getContext(),"hai cliccato ranking",Toast.LENGTH_SHORT).show();
+
+
+                }
+
                 if(event.getX()>distance/2-200-apollo11.getWidth()&&event.getX()<distance/2-200&&event.getY()>0&&event.getY()<apollo11.getHeight()){
 
                     isSwitching=true;
 
-                    //quando tocchi sulla teca dell'apollo 11 richiamare l'activity poltrait
+                    //quando tocchi sulla teca dell'apollo 11 richiamare l'activity portrait
                 }
                 if((event.getX()>distance/2+200)&&(event.getX()<distance/2+200+roverMars.getWidth())&&event.getY()>screenY-floor.getHeight()-roverMars.getHeight()+5&&event.getY()<screenY-floor.getHeight()+5)
                 {
