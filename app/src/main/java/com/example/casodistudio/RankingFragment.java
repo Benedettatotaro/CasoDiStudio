@@ -12,6 +12,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.casodistudio.ingress.Player;
@@ -41,6 +45,10 @@ public class RankingFragment extends Fragment {
     ValueEventListener valueEventListener;
     Player player;
     long totGems = 0;
+    ListView rankList;
+    ArrayAdapter<String> arr;
+    String[] appoggio;
+    Button go_back;
     //TO DO: GESTIRE LA CLASSIFICA
 
 
@@ -50,13 +58,22 @@ public class RankingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_ranking, container, false);
         ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if(connectivityManager.getActiveNetwork() != null)
         {
+           //rankList = getView().findViewById(R.id.list);
+            rankList = v.findViewById(R.id.list);
+            go_back = v.findViewById(R.id.go_back);
 
-
-            List<Player> list= new ArrayList<Player>();
+            go_back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getActivity().finish();
+                }
+            });
+            ArrayList<Player> list= new ArrayList<Player>();
             db = FirebaseFirestore.getInstance();
             db.collection("gems").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -70,6 +87,22 @@ public class RankingFragment extends Fragment {
 
                         }
                         Collections.sort(list);
+                        appoggio = new String[list.size()];
+
+                       // for(int i= 0; i< list.size(); i++)
+                      // {
+                        //    player = list.get(i);
+                       //     appoggio[i] = player.getName() + player.getPunteggio();
+
+
+                      // }
+                        CustomAdapter myCustomAdapter = new CustomAdapter(v.getContext(),list);
+                        rankList.setAdapter(myCustomAdapter);
+
+                        //arr = new ArrayAdapter<String>(v.getContext(),R.layout.fragment_ranking,appoggio);
+                        //rankList.setAdapter(arr);
+
+
 
 
                     }else
@@ -90,7 +123,7 @@ public class RankingFragment extends Fragment {
 
 
 
-        return inflater.inflate(R.layout.fragment_ranking, container, false);
+        return v;
     }
 
 
