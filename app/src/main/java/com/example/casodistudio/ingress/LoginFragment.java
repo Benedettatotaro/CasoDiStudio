@@ -75,7 +75,7 @@ public class LoginFragment extends Fragment {
 
 
                 if(TextUtils.isEmpty(txt_email)  || TextUtils.isEmpty(txt_password)){
-                    Toast toast=Toast.makeText(getActivity(), "Fill all the credentials to login ", Toast.LENGTH_SHORT);
+                    Toast toast=Toast.makeText(getActivity(), R.string.Fill_login, Toast.LENGTH_SHORT);
                     toast.show();
                 }else
                 {
@@ -101,7 +101,7 @@ public class LoginFragment extends Fragment {
             public void onSuccess(AuthResult authResult) {
 
 
-                toast=Toast.makeText(getActivity(), "login successful ", Toast.LENGTH_SHORT);
+                toast=Toast.makeText(getActivity(), R.string.loggin_successful, Toast.LENGTH_SHORT);
 
 
                 docRef = FirebaseFirestore.getInstance().collection("gems").document(email);
@@ -133,7 +133,7 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
 
-                        toast=Toast.makeText(getActivity(), "doc error, retry ", Toast.LENGTH_SHORT);
+                        toast=Toast.makeText(getActivity(), R.string.Doc_error, Toast.LENGTH_SHORT);
                         toast.show();
 
                     }
@@ -148,7 +148,7 @@ public class LoginFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                toast=Toast.makeText(getActivity(), "login failed, retry ", Toast.LENGTH_SHORT);
+                toast=Toast.makeText(getActivity(), R.string.Loggin_failed, Toast.LENGTH_SHORT);
                 toast.show();
                 Log.w(TAG ,"login failed",e);
 

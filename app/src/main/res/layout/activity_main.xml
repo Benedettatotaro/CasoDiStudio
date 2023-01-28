@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/background_interfacce"
+        android:src="@drawable/opera_senza_titolo"
         tools:layout_editor_absoluteX="0dp" />
 
     <LinearLayout
@@ -23,13 +23,12 @@
 
         <TextView
             android:layout_width="300dp"
-            android:layout_height="200dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_marginTop="100dp"
             android:fontFamily="sans-serif-condensed-medium"
             android:orientation="horizontal"
-            android:text="          Hirooki's
-        Adventures"
+            android:text="Hirooki's\n      Adventures"
             android:textColor="#ffffff"
             android:textSize="40sp"
             tools:ignore="MissingConstraints" />

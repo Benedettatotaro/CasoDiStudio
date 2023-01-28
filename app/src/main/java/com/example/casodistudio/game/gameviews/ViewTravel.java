@@ -19,7 +19,6 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import com.example.casodistudio.GameActivityPortrait;
 import com.example.casodistudio.HallActivity;

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CasoDiStudio</string>
+
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Strings related to home -->
+    <string name="Explanation">Benvenuto nella nostra App!\nAccedi or Registrati per salvare i tuoi progressi</string>
+    <string name="Login">Accedi</string>
+    <string name="Sign_up">Registrati</string>
+
+
+    <!-- Strings related to login -->
+    <string name="Loggin_failed">Loggin fallito, riprova</string>
+    <string name="Doc_error">"Documento del DB non caricato correttamente,riprova"</string>
+    <string name="loggin_successful">"Accesso effettuato correttamente"</string>
+    <string name="Fill_login">"Riempi tutti i campi per accedere "</string>
+    <string name="invalid_password">La password deve avere più di 5 caratteri</string>
+    <string name="Insert_data">Inserisci i tuoi dati</string>
+
+
+    <!-- Strings related to sign up -->
+    <string name="ConfPssw">Conferma password</string>
+    <string name="Fill_signup">"Riempi tutti i campi per registrarti"</string>
+    <string name="Pssw_short">"password troppo corta, min. 6 caratteri"</string>
+    <string name="Pssw_conPssw">"password e conferma password sono diversi"</string>
+    <string name="Conn_check">"Verifica la tua connessione e riprova"</string>
+    <string name="Reg_succ">"Registrazione utente avvenuta con successo"</string>
+    <string name="Reg_fail">"Registrazione fallita"</string>
+
+
+
+
+
+    <!-- Strings related to ranking -->
+    <string name="Name">Nome</string>
+    <string name="Score">Punteggio</string>
+    <string name="Back">Indietro</string>
+
+
+
+    <!-- Strings related to Museum -->
+    <string name="Account_succ">"Il tuo account è stato aggiornato con successo"</string>
+    <string name="Off">"Stai giocando OffLine"</string>
+    <string name="Guest">"Sei un ospite"</string>
+    <string name="Gemmcap">"Devi collezionare 50 gemme per sbloccare questo livello"</string>
+
+
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Accedi o Registrati</string>
+    <string name="action_sign_in_short">Accedi</string>
+    <string name="welcome">"Benvenuto!"</string>
+    <string name="invalid_username">Nome non valido</string>
+    <string name="login_failed">"Accesso fallito"</string>
+    <string name="Failed_update">"Failed update"</string>
+</resources>

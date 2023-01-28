@@ -12,8 +12,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/edittextbackground"
         android:id="@+id/spiegazione"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:layout_centerHorizontal="true"
         android:textSize="20dp"
         android:textStyle="bold"
@@ -22,18 +23,21 @@
         android:text="@string/Insert_data"/>
 
     <EditText
+        android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"
         android:layout_below="@+id/spiegazione"
-        android:id="@+id/email"
-        android:text="email"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/edittextbackground"
-        android:padding="20dp"
-        android:layout_margin="10dp"
         android:drawableLeft="@drawable/ic_baseline_person_outline_24"
-        android:drawablePadding="20dp"/>
+        android:drawablePadding="20dp"
+        android:hint="email"
+        android:padding="20dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

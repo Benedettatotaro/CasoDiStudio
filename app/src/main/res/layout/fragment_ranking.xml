@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="30dp"
-        android:text="Name"
+        android:text="@string/Name"
         android:textAlignment="center"
         android:layout_marginLeft="160dp"/>
 
@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="530dp"
-        android:text="Score"
+        android:text="@string/Score"
         android:textSize="30dp"
         android:textAlignment="center" />
 
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="350dp"
         android:layout_marginLeft="300dp"
-        android:text="Go Back" />
+        android:text="@string/Back" />
 
 
 </FrameLayout>

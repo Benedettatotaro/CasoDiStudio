@@ -92,7 +92,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 
-                        toast = Toast.makeText(getContext(), "your account has been updated correctly", Toast.LENGTH_SHORT);
+                        toast = Toast.makeText(getContext(), R.string.Account_succ, Toast.LENGTH_SHORT);
                         toast.show();
                     }
                 });
@@ -101,7 +101,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
             }else
             {
-                toast = Toast.makeText(getContext(), "You are playing offline", Toast.LENGTH_SHORT);
+                toast = Toast.makeText(getContext(), R.string.Off, Toast.LENGTH_SHORT);
                 toast.show();
 
             }
@@ -109,7 +109,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
         }else
         {
-             toast = Toast.makeText(getContext(), "You are a guess", Toast.LENGTH_SHORT);
+             toast = Toast.makeText(getContext(), R.string.Guest, Toast.LENGTH_SHORT);
             toast.show();
 
 
@@ -278,7 +278,6 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 {
                     short flag=1,flagActivity=1;// flagActivity in questo caso e inutile
                     hallactivity.callManager(flag,flagActivity);
-                    Toast.makeText(getContext(),"hai cliccato ranking",Toast.LENGTH_SHORT).show();
 
 
                 }
@@ -300,7 +299,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                     }else
                     {
 
-                        toast = Toast.makeText(getContext(), "You have to collect at least 50 gem to unlock this level", Toast.LENGTH_SHORT);
+                        toast = Toast.makeText(getContext(), R.string.Gemmcap, Toast.LENGTH_SHORT);
                         toast.show();
 
                     }

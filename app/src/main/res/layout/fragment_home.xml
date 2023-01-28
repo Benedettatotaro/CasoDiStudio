@@ -5,26 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    android:layout_marginBottom="70dp"
     tools:context=".ingress.HomeFragment">
 
     <TextView
+        android:id="@+id/spiegazione"
         android:layout_width="390dp"
         android:layout_height="wrap_content"
-        android:id="@+id/spiegazione"
-        android:textColor="@color/white"
-        android:layout_centerHorizontal="true"
-        android:textSize="20dp"
-        android:textStyle="bold"
+        android:background="@drawable/pausebackground"
         android:fontFamily="sans-serif-condensed-medium"
-        android:layout_marginBottom="250dp"
-        android:text="@string/Explanetion"/>
+        android:text="@string/Explanation"
+        android:textColor="@color/white"
+        android:layout_marginVertical="80dp"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spiegazione"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="154dp"
+        android:textColor="@color/white" />
 
     <Button
         android:id="@+id/loginBtn"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/spiegazione"
+        android:layout_below="@+id/textView3"
         android:textAllCaps="false"
         android:text="@string/Login"
         android:background="@drawable/edittextbackground"
@@ -33,30 +41,19 @@
 
     <Button
         android:id="@+id/singupBtn"
-        android:layout_below="@+id/loginBtn"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="@string/Sign_up"
-        android:background="@drawable/edittextbackground"
+        android:layout_below="@+id/loginBtn"
         android:layout_centerHorizontal="true"
-        android:layout_margin="15dp"/>
-
-    <TextView
-        android:id="@+id/textView3"
-        android:textColor="@color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="166dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="154dp" />
+        android:background="@drawable/edittextbackground"
+        android:text="@string/Sign_up"
+        android:textAllCaps="false"
+        android:layout_marginBottom="80dp"/>
 
 
-    <!-- immagine trasparente così da far comparire
-     l'immagine dell'activity che sarà la stessa
-     per tutti i fragment d'ingresso-->
+
+
+
 
 
 
