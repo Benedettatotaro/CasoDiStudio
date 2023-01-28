@@ -17,9 +17,8 @@
         android:textSize="20dp"
         android:textStyle="bold"
         android:fontFamily="sans-serif-condensed-medium"
-        android:layout_marginBottom="190dp"
-        android:text="Benvenuto nella nostra app! Effettua il login o la \nregistrazione
-per salvare i tuoi dati\no entra come ospite per testare la nostra app"/>
+        android:layout_marginBottom="250dp"
+        android:text="@string/Explanetion"/>
 
     <Button
         android:id="@+id/loginBtn"
@@ -27,7 +26,7 @@ per salvare i tuoi dati\no entra come ospite per testare la nostra app"/>
         android:layout_height="wrap_content"
         android:layout_below="@+id/spiegazione"
         android:textAllCaps="false"
-        android:text="Login"
+        android:text="@string/Login"
         android:background="@drawable/edittextbackground"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"/>
@@ -38,7 +37,7 @@ per salvare i tuoi dati\no entra come ospite per testare la nostra app"/>
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
-        android:text="Registrazione"
+        android:text="@string/Sign_up"
         android:background="@drawable/edittextbackground"
         android:layout_centerHorizontal="true"
         android:layout_margin="15dp"/>

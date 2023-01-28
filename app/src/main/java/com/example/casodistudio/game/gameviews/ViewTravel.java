@@ -165,7 +165,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             }
 
 
-            if(gameCounter>5){  //se il gioco finisce salva i dati delle gemme
+            if(gameCounter>1600){  //se il gioco finisce salva i dati delle gemme
                 SharedPreferences.Editor editor= prefs.edit();
                 Log.d("flag",prefs.getAll().toString());
                 if(prefs.getString("email", "") != "")

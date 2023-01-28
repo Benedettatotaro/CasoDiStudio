@@ -358,6 +358,7 @@ public class ViewLandscape extends SurfaceView implements Runnable {
                 canvas.drawText("Hai perso!", xPos,yPos,textPaint);
                 getHolder().unlockCanvasAndPost(canvas);
                 waitBeforeExiting();
+
                 return;
             }
             canvas.drawBitmap(character.charOrientation(),character.charMovement(),character.y,paint);

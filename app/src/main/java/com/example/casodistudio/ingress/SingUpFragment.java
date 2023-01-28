@@ -71,8 +71,7 @@ public class SingUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_sing_up, container, false);
 
-        name=v.findViewById(R.id.name);
-        surname=v.findViewById(R.id.surname);
+
         email=v.findViewById(R.id.email);
         password=v.findViewById(R.id.password);
         checkPassword=v.findViewById(R.id.conPassword);

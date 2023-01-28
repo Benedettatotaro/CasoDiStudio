@@ -85,7 +85,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                     @Override
                     public void onFailure(@NonNull Exception e) {
 
-                         toast = Toast.makeText(getContext(), "Failed to update your data", Toast.LENGTH_SHORT);
+                         toast = Toast.makeText(getContext(), R.string.Failed_update, Toast.LENGTH_SHORT);
                          toast.show();
                     }
                 }).addOnCompleteListener(new OnCompleteListener<Void>() {
