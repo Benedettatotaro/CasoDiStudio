@@ -1,5 +1,6 @@
 package com.example.casodistudio.game.gameviews.LViews;
 
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,9 +11,15 @@ public class Background {
 
     public int screenX,screenY;
     public Bitmap background;
-    public int x=0,y=0;
+    SharedPreferences  prefs;
+    public int x= 0;
+    public int y=0;
 
-    public Background(Resources res,int screenX, int screenY,short flagPlanet){
+
+    public Background(Resources res,int screenX, int screenY,short flagPlanet, int x){
+
+        this.x = x;
+
         if(flagPlanet==0) {
             background = BitmapFactory.decodeResource(res, R.drawable.moon_background_grosso);
             background = Bitmap.createScaledBitmap(background, screenX*5, screenY, false);

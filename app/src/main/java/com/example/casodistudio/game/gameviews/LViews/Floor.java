@@ -13,7 +13,7 @@ public class Floor {
 
     public Bitmap floor;
     boolean isOnTheFloor;
-    int x,y ;
+    int x,y;
 
     public Floor(Resources res, int screenX, int screenY,short flagPlanet){
         if(flagPlanet==0){

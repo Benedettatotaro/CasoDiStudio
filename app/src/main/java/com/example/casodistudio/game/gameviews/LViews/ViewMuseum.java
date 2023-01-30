@@ -2,6 +2,7 @@ package com.example.casodistudio.game.gameviews.LViews;
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
+import android.os.Bundle;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -21,6 +23,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.casodistudio.GameActivityLandscape;
+import com.example.casodistudio.GameActivityPortrait;
 import com.example.casodistudio.HallActivity;
 import com.example.casodistudio.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -65,11 +69,19 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE);
 
 
-        //prefs.edit().clear().commit(); per pulire il prefs
+        //prefs.edit().clear().commit();  //per pulire il prefs
+
 
 
         email = prefs.getString("email", "").toString();
 
+        this.hallactivity=activity;
+        this.screenX=screenX;
+        this.screenY=screenY;
+        screenRatioX=1920F/screenX;
+        screenRatioY=1080F/screenY;
+        paint=new Paint();
+        hiroki = new Character(2,getResources(),screenX,screenY,screenRatioX,screenRatioY);
 
 
 
@@ -117,16 +129,45 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
         gemTot = prefs.getLong("moonGem", 0) + prefs.getLong("marsGem", 0);
 
+            int prova = prefs.getInt("gameCounter", 0);
+            int prova2 = prefs.getInt("flagLevel", -1);
+            if(prefs.getInt("gameCounter", 0) != 0)// controllo se si sta riferendo al portrait
+            {
+                if(prefs.getInt("flagLevel", -1) == 0 )
+                {
+                    hallactivity.callTravel((short) 0); //passa 0 come flag perché sta andando verso la luna
+
+                }else if(prefs.getInt("flagLevel", -1) == 1 )
+                {
+                    hallactivity.callTravel((short) 1); //passa 0 come flag perché sta andando verso marte
+
+                }
+
+            }
+
+            if(prefs.getInt("xPosition",0) != 0)// o landscape
+            {
+
+                if(prefs.getInt("flagLevel", -1) == 0 ) {
+                    Bundle bundle = new Bundle(1);
+                    bundle.putShort("flagPlanet", (short) 0); //setta il flag nel boundle uguale a 0 o 1
+                    Intent i = new Intent(getContext(), GameActivityLandscape.class);
+                    i.putExtras(bundle);
+                    getContext().startActivity(i);
+                }else if(prefs.getInt("flagLevel", -1) == 1 )
+                {
+                    Bundle bundle=new Bundle(1);
+                    bundle.putShort("flagPlanet", (short) 1); //setta il flag nel boundle uguale a 0 o 1
+                    Intent i = new Intent(getContext(), GameActivityLandscape.class);
+                    i.putExtras(bundle);
+                    getContext().startActivity(i);
+
+                }
+
+            }
 
 
 
-        this.hallactivity=activity;
-        this.screenX=screenX;
-        this.screenY=screenY;
-        screenRatioX=1920F/screenX;
-        screenRatioY=1080F/screenY;
-        paint=new Paint();
-        hiroki = new Character(2,getResources(),screenX,screenY,screenRatioX,screenRatioY);
 
 
         museum_background = Bitmap.createScaledBitmap(museum_background,screenX,screenY,false); //lo screen x deve essere uguale allo schermo

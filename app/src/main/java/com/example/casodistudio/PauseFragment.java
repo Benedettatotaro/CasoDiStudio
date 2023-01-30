@@ -12,9 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.casodistudio.game.gameviews.ViewTravel;
+
 public class PauseFragment extends Fragment {
 
     private short flag;
+   // private SharedPreferences prefs = getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
+    private SharedPreferences.Editor editor;
+
 
     public PauseFragment()
     {
@@ -48,6 +53,16 @@ public class PauseFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(flag==0||flag==2){   //la pausa è stata chiamata dall'activity viaggio o uno dei pianeti
+                    SharedPreferences prefs = getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
+                    editor = prefs.edit();
+
+                    editor.putInt("tempGems", 0);
+                    editor.putInt("gameCounter", 0);
+                    editor.putInt("flagLevel", -1);
+                    // prefs=getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
+                    // int tempGem = prefs.getInt("tempoGems",0);
+                    // int gameCounter = prefs.getInt("gameCounter", 0);
+
                     Intent i=new Intent(getActivity(),HallActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);

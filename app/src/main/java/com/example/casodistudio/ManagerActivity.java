@@ -3,6 +3,7 @@ package com.example.casodistudio;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -13,6 +14,7 @@ public class ManagerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = this.getSharedPreferences("game",this.MODE_PRIVATE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);

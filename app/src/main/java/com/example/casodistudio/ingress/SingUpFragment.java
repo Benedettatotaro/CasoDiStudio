@@ -133,6 +133,11 @@ public class SingUpFragment extends Fragment {
                     editor.putString("email", txt_email);
                     editor.putLong("moonGem", 0);
                     editor.putLong("marsGem", 0);
+                    editor.putInt("tempGems", 0);
+                    editor.putInt("gameCounter", 0);
+                    editor.putInt("xPosition", 0);
+                    editor.putInt("flagLevel", -1);
+
                     editor.commit();
 
                     Log.d("1",prefs.getAll().toString());

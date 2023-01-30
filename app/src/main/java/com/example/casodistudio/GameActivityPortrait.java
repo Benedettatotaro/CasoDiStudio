@@ -66,7 +66,7 @@ public class GameActivityPortrait extends AppCompatActivity {
 
     public void callPlanet(short flag){
         Bundle bundle=new Bundle(1);
-        bundle.putShort("flagPlanet", flag); //setta il flag nel boundle uguale a 0 o1
+        bundle.putShort("flagPlanet", flag); //setta il flag nel boundle uguale a 0 o 1
         Intent i = new Intent(GameActivityPortrait.this, GameActivityLandscape.class);
         i.putExtras(bundle);
         this.startActivity(i);

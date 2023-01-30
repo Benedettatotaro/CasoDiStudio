@@ -44,16 +44,19 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     public List<Bullet> bullets;
     public List<Enemy> enemies;
     boolean isGameOver;
+    boolean isCalledByPause = false;
     private Bitmap pause;
-    public int gameCounter=0;
-    public int gemCounter=10;
+    public static int gameCounter;
+    public static int gemCounter;
+
     private Paint text;
     private int enemyCounter;
     public Background background_1,background_2;
     public Ship ship;
-    private SharedPreferences prefs;
+    private  SharedPreferences prefs = getContext().getSharedPreferences("game",getContext().MODE_PRIVATE);
+    SharedPreferences.Editor editor;
     short flagPlanet;
-    //private Update update;
+
 
     public ViewTravel(GameActivityPortrait activity, short flag,int screenY,int screenX) {
 
@@ -63,10 +66,12 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         this.screenX=screenX;
         this.screenY=screenY;
 
-        prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE); // scrive nel DB del telefono
+        //prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE); // scrive nel DB del telefono
+        gameCounter = prefs.getInt("gameCounter", 0);
+        gemCounter = prefs.getInt("tempGems", 0);
+
 
         paint=new Paint();
-
         text=new Paint();
         text.setColor(Color.WHITE);
         text.setTextSize(50);
@@ -164,7 +169,8 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             }
 
 
-            if(gameCounter>1600){  //se il gioco finisce salva i dati delle gemme
+            if(gameCounter>100){  //se il gioco finisce salva i dati delle gemme
+               // prefs=getContext().getSharedPreferences("game",getContext().MODE_PRIVATE); // scrive nel DB del telefono
                 SharedPreferences.Editor editor= prefs.edit();
                 Log.d("flag",prefs.getAll().toString());
                 if(prefs.getString("email", "") != "")
@@ -176,7 +182,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                      editor.putLong("moonGem", appoggio);
                      editor.commit();
 
-                 }else// marte
+                 }else if(flagPlanet == 1)// marte
                  {
                      long appoggio = prefs.getLong("marsGem",0);
                      appoggio += gemCounter;
@@ -185,16 +191,23 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                  }
 
                 }
+                editor.putInt("gameCounter", 0);
+                editor.putInt("tempGems",0);
+                editor.commit();
+
                 //sleep(10000);
                 Log.d("flag",prefs.getAll().toString());
                 getHolder().unlockCanvasAndPost(canvas);
                 gameActivityPortrait.callPlanet(flagPlanet);
                 return;
 
+
                 //TO DO: CHIAMARE L'ACTIVITY DELLA LUNA
             }
 
             if(isGameOver){ //se hai perso
+                // scrive nel DB del telefono
+                editor = prefs.edit();
                 isPlaying=false; //il gioco si blocca
                 Paint textPaint = new Paint();
                 textPaint.setTextAlign(Paint.Align.CENTER);
@@ -203,6 +216,13 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                 textPaint.setColor(Color.WHITE);
                 textPaint.setTextSize(100);
                 canvas.drawText("Hai perso!", xPos,yPos,textPaint);
+
+                gemCounter = 0;
+                gameCounter = 0;
+               // editor.putInt("tempGems", 0);
+               // editor.putInt("gameCounter", 0);
+                editor.putInt("flagLevel",-1);
+                editor.commit();
                 getHolder().unlockCanvasAndPost(canvas);
                 waitBeforeExiting();
                 return;
@@ -212,6 +232,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     }
 
     private void waitBeforeExiting(){
+
         try {
             Thread.sleep(3000);
             gameActivityPortrait.startActivity(new Intent(gameActivityPortrait, HallActivity.class));
@@ -337,13 +358,20 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     public void resume(){
         accelerometerReset();
         isPlaying=true;
+        isCalledByPause = false;
         thread=new Thread(this);
         thread.start();
     }
 
     public void pause(){
+
+
+        //prefs=getContext().getSharedPreferences("game",getContext().MODE_PRIVATE); // scrive nel DB del telefono
+
+
         accelerometerOut();
         try {
+
             isPlaying=false;
             thread.join();
         } catch (InterruptedException e) {
@@ -382,6 +410,8 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             case MotionEvent.ACTION_DOWN:
                 if(event.getX()>screenX-pause.getWidth()-10*screenRatioX&&event.getY()<10*screenRatioX+pause.getHeight()){
                     //se il tocco avviene nel quadrato in cui si trova il bottone di pausa
+
+
                     short flag=0,flagActivity=0;
                     gameActivityPortrait.callManager(flag,flagActivity);
                 }
