@@ -129,9 +129,12 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
         gemTot = prefs.getLong("moonGem", 0) + prefs.getLong("marsGem", 0);
 
-            int prova = prefs.getInt("gameCounter", 0);
-            int prova2 = prefs.getInt("flagLevel", -1);
-            if(prefs.getInt("gameCounter", 0) != 0)// controllo se si sta riferendo al portrait
+            int prova1 = prefs.getInt("gameCounter", 0);
+            int prova2 = prefs.getInt("xPosition",0);
+            int prova3 = prefs.getInt("flagLevel", -1);
+            int prova = prefs.getInt("",0);
+
+        if(prefs.getInt("gameCounter", 0) != 0)// controllo se si sta riferendo al portrait
             {
                 if(prefs.getInt("flagLevel", -1) == 0 )
                 {
@@ -254,6 +257,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas
                 sleep(7000);  //imposta questo tempo per far comparire l'interfaccia con la storia e poi passare all'activity per il viaggio
                 hallactivity.callTravel(c); //passa 0 come flag perché sta andando verso la luna
+                isSwitching = false;
                 return;
             }
             getHolder().unlockCanvasAndPost(canvas);  //dopo aver disegnato le bitmap sblocca il canvas

@@ -17,14 +17,18 @@ import com.example.casodistudio.game.gameviews.ViewTravel;
 public class PauseFragment extends Fragment {
 
     private short flag;
-   // private SharedPreferences prefs = getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
-    private SharedPreferences.Editor editor;
+
+    private SharedPreferences prefs ;
+
+    private SharedPreferences.Editor editor ;
 
 
     public PauseFragment()
     {
         //this.flag=flag;
     }
+
+
 
     @Override
     public void setArguments(@Nullable Bundle args) {
@@ -45,7 +49,6 @@ public class PauseFragment extends Fragment {
             public void onClick(View view) {
                 //ritornare all'activity precedente distruggendo questa
                 getActivity().finish();
-
             }
         });
 
@@ -53,21 +56,23 @@ public class PauseFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(flag==0||flag==2){   //la pausa è stata chiamata dall'activity viaggio o uno dei pianeti
-                    SharedPreferences prefs = getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
+
+                    prefs = getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
                     editor = prefs.edit();
 
                     editor.putInt("tempGems", 0);
                     editor.putInt("gameCounter", 0);
+                    editor.putInt("xPosition", 0);
                     editor.putInt("flagLevel", -1);
-                    // prefs=getActivity().getSharedPreferences("game",getActivity().MODE_PRIVATE);
-                    // int tempGem = prefs.getInt("tempoGems",0);
-                    // int gameCounter = prefs.getInt("gameCounter", 0);
+                    editor.commit();
 
                     Intent i=new Intent(getActivity(),HallActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
+
+                    //getActivity().finish(); //e chiude l'activity manager
+
                     //getActivity().onBackPressed(); //va indietro nella pila di chiamate
-                    getActivity().finish(); //e chiude l'activity manager
                 }
                 else if(flag==1){  //la pausa è stata chiamata dall'activity museo
                     NavUtils.navigateUpFromSameTask(getActivity());

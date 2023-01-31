@@ -117,11 +117,14 @@ public class LoginFragment extends Fragment {
                                 editor.putString("email", email);
                                 editor.putLong("moonGem", (long )localGems.get("moonGem"));
                                 editor.putLong("marsGem", (long)localGems.get("marsGem"));
+
                                 editor.putInt("tempGems", 0);
                                 editor.putInt("gameCounter", 0);
                                 editor.putInt("xPosition", 0);
                                 editor.putInt("flagLevel", -1);
+
                                 editor.commit();
+
                                 Intent i = new Intent(getActivity(), HallActivity.class);
                                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(i);

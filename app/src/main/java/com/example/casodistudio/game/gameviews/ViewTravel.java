@@ -44,17 +44,16 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     public List<Bullet> bullets;
     public List<Enemy> enemies;
     boolean isGameOver;
-    boolean isCalledByPause = false;
     private Bitmap pause;
     public static int gameCounter;
     public static int gemCounter;
-
+    private boolean isPressedPause = false;
     private Paint text;
     private int enemyCounter;
     public Background background_1,background_2;
     public Ship ship;
     private  SharedPreferences prefs = getContext().getSharedPreferences("game",getContext().MODE_PRIVATE);
-    SharedPreferences.Editor editor;
+    SharedPreferences.Editor editor = prefs.edit();
     short flagPlanet;
 
 
@@ -66,7 +65,6 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         this.screenX=screenX;
         this.screenY=screenY;
 
-        //prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE); // scrive nel DB del telefono
         gameCounter = prefs.getInt("gameCounter", 0);
         gemCounter = prefs.getInt("tempGems", 0);
 
@@ -76,8 +74,6 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
         text.setColor(Color.WHITE);
         text.setTextSize(50);
         text.setTextAlign(Paint.Align.CENTER);
-
-        //update=new Update(ViewTravel.this);
 
         background_1=new Background(getResources(),screenX,screenY);
         background_2=new Background(getResources(),screenX,screenY);
@@ -107,6 +103,10 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                 update();
                 draw();
                 sleep(36);
+                if(isGameOver){
+                    waitBeforeExiting();
+                    return;
+                }
                 gameCounter++;
             }
     }
@@ -169,9 +169,8 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             }
 
 
-            if(gameCounter>100){  //se il gioco finisce salva i dati delle gemme
-               // prefs=getContext().getSharedPreferences("game",getContext().MODE_PRIVATE); // scrive nel DB del telefono
-                SharedPreferences.Editor editor= prefs.edit();
+            if(gameCounter>20){  //se il gioco finisce salva i dati delle gemme
+
                 Log.d("flag",prefs.getAll().toString());
                 if(prefs.getString("email", "") != "")
                 {
@@ -191,11 +190,15 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                  }
 
                 }
-                editor.putInt("gameCounter", 0);
-                editor.putInt("tempGems",0);
+                gemCounter = 0;
+                gameCounter = 0;
+
+                editor.putInt("tempGems",gemCounter);
+                editor.putInt("gameCounter", gameCounter);
                 editor.commit();
 
                 //sleep(10000);
+
                 Log.d("flag",prefs.getAll().toString());
                 getHolder().unlockCanvasAndPost(canvas);
                 gameActivityPortrait.callPlanet(flagPlanet);
@@ -207,7 +210,6 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
             if(isGameOver){ //se hai perso
                 // scrive nel DB del telefono
-                editor = prefs.edit();
                 isPlaying=false; //il gioco si blocca
                 Paint textPaint = new Paint();
                 textPaint.setTextAlign(Paint.Align.CENTER);
@@ -216,15 +218,8 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                 textPaint.setColor(Color.WHITE);
                 textPaint.setTextSize(100);
                 canvas.drawText("Hai perso!", xPos,yPos,textPaint);
-
-                gemCounter = 0;
-                gameCounter = 0;
-               // editor.putInt("tempGems", 0);
-               // editor.putInt("gameCounter", 0);
-                editor.putInt("flagLevel",-1);
-                editor.commit();
                 getHolder().unlockCanvasAndPost(canvas);
-                waitBeforeExiting();
+
                 return;
             }
             getHolder().unlockCanvasAndPost(canvas);
@@ -235,8 +230,21 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
 
         try {
             Thread.sleep(3000);
-            gameActivityPortrait.startActivity(new Intent(gameActivityPortrait, HallActivity.class));
+
+            gemCounter = 0;
+            gameCounter = 0;
+            flagPlanet = -1;
+
+            editor.putInt("tempGems",gemCounter);
+            editor.putInt("gameCounter", gameCounter);
+            editor.putInt("flagLevel", flagPlanet);
+            editor.commit();
+
+            Intent i=new Intent(gameActivityPortrait,HallActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            gameActivityPortrait.startActivity(i);
             gameActivityPortrait.finish();
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -356,18 +364,25 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
     }
 
     public void resume(){
+        isPressedPause = false;
         accelerometerReset();
         isPlaying=true;
-        isCalledByPause = false;
         thread=new Thread(this);
         thread.start();
     }
 
     public void pause(){
 
-
-        //prefs=getContext().getSharedPreferences("game",getContext().MODE_PRIVATE); // scrive nel DB del telefono
-
+        editor.putInt("tempGems",gemCounter);
+        editor.putInt("gameCounter", gameCounter);
+        editor.putInt("flagLevel", flagPlanet);
+        editor.commit();
+        if(isPressedPause){
+            editor.putInt("tempGems",0);
+            editor.putInt("gameCounter", 0);
+            editor.putInt("flagLevel", -1);
+            editor.commit();
+        }
 
         accelerometerOut();
         try {
@@ -410,8 +425,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             case MotionEvent.ACTION_DOWN:
                 if(event.getX()>screenX-pause.getWidth()-10*screenRatioX&&event.getY()<10*screenRatioX+pause.getHeight()){
                     //se il tocco avviene nel quadrato in cui si trova il bottone di pausa
-
-
+                    isPressedPause = true;
                     short flag=0,flagActivity=0;
                     gameActivityPortrait.callManager(flag,flagActivity);
                 }

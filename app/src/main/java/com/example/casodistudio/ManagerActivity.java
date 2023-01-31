@@ -25,7 +25,7 @@ public class ManagerActivity extends AppCompatActivity {
             if (flagActivity == 0) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
-            else if(flagActivity==1||flag==3){
+            else if(flagActivity==1){
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
             FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();

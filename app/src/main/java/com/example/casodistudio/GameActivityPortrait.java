@@ -39,20 +39,24 @@ public class GameActivityPortrait extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();
+
         viewTravel.resume();
+        super.onResume();
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
+
         viewTravel.pause();
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
+
+        //viewTravel.pause();
         super.onDestroy();
-        viewTravel.pause();
+
     }
 
     public void callManager(short flag, short flagActivity){

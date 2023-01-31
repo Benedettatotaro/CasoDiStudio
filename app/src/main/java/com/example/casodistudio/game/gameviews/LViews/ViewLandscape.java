@@ -56,29 +56,27 @@ public class ViewLandscape extends SurfaceView implements Runnable {
     private int xFlag,yFlag;
     private boolean win=false;
     private Bitmap pause;
+    private boolean isPressedPause = false;
     private boolean isEndBgLeft;
     private boolean isEndBgRight;
     private boolean flagIsOnTheScreen=false;
     private Paint text;
-    SharedPreferences prefs ;
-    SharedPreferences.Editor editor;
+    private  SharedPreferences prefs = getContext().getSharedPreferences("game",getContext().MODE_PRIVATE);
+    SharedPreferences.Editor editor = prefs.edit();
 
     public ViewLandscape(GameActivityLandscape gameActivityLandscape,short flag,int screenY,int screenX) {
 
         super(gameActivityLandscape);
         this.gameActivityLandscape = gameActivityLandscape;
-        prefs = getContext().getSharedPreferences("game",getContext().MODE_PRIVATE);
         this.flagPlanet = flag;
         this.screenX =screenX;
         this.screenY =screenY;
-
         random = new Random();
-
         paint =new Paint();
-
         floors=new Floor[10];
-        gemCounter = prefs.getInt("tempGems",0);
 
+
+        gemCounter = prefs.getInt("tempGems",0);
         background = new Background(getResources(),screenX,screenY,flagPlanet,prefs.getInt("xPosition",0));
 
         for(int i=0; i<10; i++){
@@ -270,7 +268,7 @@ public class ViewLandscape extends SurfaceView implements Runnable {
             if(flagPlanet==0){
                 character.y+=20;
             }
-            else{
+            else if (flagPlanet == 1){
                 character.y+=10;
             }
 
@@ -281,11 +279,13 @@ public class ViewLandscape extends SurfaceView implements Runnable {
 
     private void draw(){
         if(getHolder().getSurface().isValid()){
+
+
+
             Canvas canvas = getHolder().lockCanvas();
-            prefs = getContext().getSharedPreferences("game",getContext().MODE_PRIVATE);
-            editor = prefs.edit();
             canvas.drawBitmap(background.background,background.x,background.y,paint);
             canvas.drawText(""+gemCounter,30*screenRatioY,30*screenRatioY,text);
+
             for(Floor floor:floors) {
                 canvas.drawBitmap(floor.floor,floor.x,floor.y,paint);
             }
@@ -297,6 +297,7 @@ public class ViewLandscape extends SurfaceView implements Runnable {
                 canvas.drawBitmap(flagEnd,xFlag,screenY-floors[0].floor.getHeight()-flagEnd.getHeight(),paint);
                 flagIsOnTheScreen=true;
             }
+
             if(powerUpIsOnTheScreen){
                 canvas.drawBitmap(powerup,xPowerup,yPowerup,paint);
             }
@@ -304,7 +305,6 @@ public class ViewLandscape extends SurfaceView implements Runnable {
             canvas.drawBitmap(buttonJump,10*screenRatioX,screenY-10*screenRatioX-buttonJump.getHeight(),paint);
             canvas.drawBitmap(buttonLeft,screenX-10*screenRatioX-buttonLeft.getWidth(),screenY-10*screenRatioX-buttonLeft.getHeight(),paint);
             canvas.drawBitmap(buttonRight,screenX-buttonRight.getWidth()-buttonLeft.getWidth()-20*screenRatioX,screenY-10*screenRatioX-buttonJump.getHeight(),paint);
-
 
             if(!gems.isEmpty()){
                 for(Gem gem:gems){
@@ -319,7 +319,9 @@ public class ViewLandscape extends SurfaceView implements Runnable {
             }
 
             if(win){
+
                 isPlaying=false; //il gioco si blocca
+
                 Paint textPaint = new Paint();
                 textPaint.setTextAlign(Paint.Align.CENTER);
                 int xPos = (canvas.getWidth() / 2);
@@ -328,19 +330,20 @@ public class ViewLandscape extends SurfaceView implements Runnable {
                 textPaint.setTextSize(100);
                 canvas.drawText("Hai vinto!", xPos,yPos,textPaint);
                 getHolder().unlockCanvasAndPost(canvas);
-                waitBeforeExiting();
-                long appoggio;
+
                 if(flagPlanet == 0) // luna
                 {
+                    long appoggio;
                     appoggio = prefs.getLong("moonGem", 0);
-                    appoggio =+ gemCounter;
+                    appoggio += gemCounter;
                     editor.putLong("moonGem", appoggio);
                     editor.commit();
 
-                }else // marte
+                }else if(flagPlanet == 1) // marte
                 {
+                    long appoggio;
                     appoggio = prefs.getLong("marsGem", 0);
-                    appoggio =+ gemCounter;
+                    appoggio += gemCounter;
                     editor.putLong("marsGem", appoggio);
                     editor.commit();
                 }
@@ -349,6 +352,11 @@ public class ViewLandscape extends SurfaceView implements Runnable {
                 background.x = 0;
                 flagPlanet = -1;
 
+                editor.putInt("tempGems",gemCounter);
+                editor.putInt("xPosition", background.x);
+                editor.putInt("flagLevel", flagPlanet);
+                editor.commit();
+
                 Intent i = new Intent(getContext(), HallActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 getContext().startActivity(i);
@@ -356,13 +364,9 @@ public class ViewLandscape extends SurfaceView implements Runnable {
             }
 
             if(isGameOver){ //se perdi
-                gemCounter = 0;
-                background.x = 0;
-                //flagPlanet = -1;
-                editor.putInt("flagLevel", -1);
-
 
                 isPlaying=false; //il gioco si blocca
+
                 Paint textPaint = new Paint();
                 textPaint.setTextAlign(Paint.Align.CENTER);
                 int xPos = (canvas.getWidth() / 2);
@@ -371,9 +375,6 @@ public class ViewLandscape extends SurfaceView implements Runnable {
                 textPaint.setTextSize(100);
                 canvas.drawText("Hai perso!", xPos,yPos,textPaint);
                 getHolder().unlockCanvasAndPost(canvas);
-
-                waitBeforeExiting();
-
 
 
                 return;
@@ -389,6 +390,16 @@ public class ViewLandscape extends SurfaceView implements Runnable {
     private void waitBeforeExiting(){
         try {
             Thread.sleep(3000);
+
+            gemCounter = 0;
+            background.x = 0;
+            flagPlanet = -1;
+
+            editor.putInt("tempGems",gemCounter);
+            editor.putInt("xPosition", background.x);
+            editor.putInt("flagLevel", flagPlanet);
+            editor.commit();
+
             gameActivityLandscape.startActivity(new Intent(gameActivityLandscape, HallActivity.class));
             gameActivityLandscape.finish();
         } catch (InterruptedException e) {
@@ -404,7 +415,9 @@ public class ViewLandscape extends SurfaceView implements Runnable {
             case MotionEvent.AXIS_PRESSURE:
                 if(event.getX()>screenX-pause.getWidth()-10*screenRatioX&&event.getY()<10*screenRatioX+pause.getHeight()){
                     //se il tocco avviene nel quadrato in cui si trova il bottone di pausa
-                    short flag=0,flagActivity=2;
+                    isPressedPause = true;
+
+                    short flag=0,flagActivity=1;
                     gameActivityLandscape.callManager(flag,flagActivity);
                 }
                 if(event.getX()>10*screenRatioX&&event.getX()<10*screenRatioX+buttonJump.getWidth()&&event.getY()>screenY-10*screenRatioX-buttonJump.getHeight()&&event.getY()<screenY-10*screenRatioX){
@@ -440,7 +453,7 @@ public class ViewLandscape extends SurfaceView implements Runnable {
                     character.setIsRight(false);
                     break;
                 }
-                //se è stato il premuto il bottone di destra
+                //se è stato premuto il bottone di destra
                 else if(event.getX()>screenX-10*screenRatioX-buttonLeft.getWidth()&&event.getX()<screenX-10*screenRatioX&&event.getY()>screenY-10*screenRatioX-buttonJump.getHeight()&&event.getY()<screenY-10*screenRatioX){
                     if(background.x+ background.background.getWidth() - 2> screenX){
                         background.x -= 5;
@@ -479,6 +492,7 @@ public class ViewLandscape extends SurfaceView implements Runnable {
     }
 
     public void resume(){
+        isPressedPause = false;
         isPlaying = true;
         thread = new Thread(this);
         thread.start();
@@ -487,12 +501,18 @@ public class ViewLandscape extends SurfaceView implements Runnable {
 
     public void pause(){
 
-        prefs = getContext().getSharedPreferences("game",getContext().MODE_PRIVATE);
-        editor = prefs.edit();
         editor.putInt("tempGems",gemCounter);
         editor.putInt("xPosition", background.x);
         editor.putInt("flagLevel", flagPlanet);
         editor.commit();
+
+        if(isPressedPause){
+            editor.putInt("tempGems",0);
+            editor.putInt("xPosition", 0);
+            editor.putInt("flagLevel", -1);
+            editor.commit();
+        }
+
         try {
             isPlaying = false;
             thread.join();
@@ -516,6 +536,10 @@ public class ViewLandscape extends SurfaceView implements Runnable {
             update();
             draw();
             sleep();
+            if(isGameOver){
+                waitBeforeExiting();
+                return;
+            }
             gameCounter++;
         }
     }
