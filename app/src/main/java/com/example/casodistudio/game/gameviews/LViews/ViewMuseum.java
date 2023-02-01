@@ -308,6 +308,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 if(event.getX()>distance/2-200-apollo11.getWidth()&&event.getX()<distance/2-200&&event.getY()>0&&event.getY()<apollo11.getHeight()){
 
                     if(prefs.getInt("flagLevel",-1) == 0 && prefs.getInt("flagLevel",-1) != 1) {
+                        Toast.makeText(getContext(), R.string.Recap, Toast.LENGTH_SHORT).show();
                         checkLevelStatus((short) 0);
                     }else {
                         isSwitching = true;
@@ -320,6 +321,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                     if( gemTot>= 50)
                     {
                         if(prefs.getInt("flagLevel",-1) == 1 && prefs.getInt("flagLevel",-1) != 0) {
+                            Toast.makeText(getContext(), R.string.Recap, Toast.LENGTH_SHORT).show();
                             checkLevelStatus((short) 1);
                         }else{
                             hallactivity.callTravel((short)1);
