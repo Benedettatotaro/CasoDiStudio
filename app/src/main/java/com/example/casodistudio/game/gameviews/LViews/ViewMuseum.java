@@ -69,7 +69,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
         prefs=activity.getSharedPreferences("game",activity.MODE_PRIVATE);
 
 
-        //prefs.edit().clear().commit();  //per pulire il prefs
+       // prefs.edit().clear().commit();  //per pulire il prefs
 
 
 
@@ -92,7 +92,12 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
                 db = FirebaseFirestore.getInstance();
                 Map<String, Object> appoggio = (Map<String, Object>) prefs.getAll();
-                appoggio.remove("email","");
+                appoggio.remove("email");
+                appoggio.remove("xPosition");
+                appoggio.remove("tempGems");
+                appoggio.remove("gameCounter");
+                appoggio.remove("flagLevel");
+
                 db.collection("gems").document(prefs.getString("email", "")).set(appoggio).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {

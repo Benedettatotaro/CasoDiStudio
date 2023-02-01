@@ -435,6 +435,13 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
             case MotionEvent.ACTION_UP:
                 isPressed=false;
                 break;
+
+            case MotionEvent.BUTTON_BACK:
+                Intent i=new Intent(getContext(),HallActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(i);
+                //getActivity().onBackPressed(); //va indietro nella pila di chiamate
+                //e chiude l'activity manager
         }
         return true;
     }

@@ -1,14 +1,19 @@
 package com.example.casodistudio;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.casodistudio.game.gameviews.LViews.ViewMuseum;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class HallActivity extends AppCompatActivity {
 
@@ -18,6 +23,8 @@ public class HallActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 1);
+        askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, 1);
         //imposta l'orientamento in orizzontale come obbligatorio
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -69,5 +76,29 @@ public class HallActivity extends AppCompatActivity {
         Intent i=new Intent(HallActivity.this,MainActivity.class);
         this.startActivity(i);
     }
+
+    private void askForPermission(String permission, Integer requestCode) {
+        if (ContextCompat.checkSelfPermission(this, permission)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this, permission)) {
+
+                //This is called if user has denied the permission before
+                //In this case I am just asking the permission again
+                ActivityCompat.requestPermissions(this,
+                        new String[]{permission}, requestCode);
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{permission}, requestCode);
+            }
+        } else {
+            Toast.makeText(this, permission + " is already granted.",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }
