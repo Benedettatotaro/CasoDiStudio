@@ -202,10 +202,7 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
                 textPaint.setColor(Color.WHITE);
                 textPaint.setTextSize(16 * getResources().getDisplayMetrics().density);
-                String message="Durante gli anni della guerra fredda, tra stati uniti e " +  //da aggiustare FA SCHIFO!!!!
-                        "unione sovietica uno dei tanti obiettivi contesi era il primo viaggio con equipaggio verso la Luna. " +
-                        "Il giorno 20 luglio 1969 tre astronauti statunitensi sono partiti per la missione spaziale Apollo 11 per poi " +
-                        "atterrare sul suolo lunare il giorno dopo. Aiuta la navicella a raggiungere la luna come l’equipaggio fece quel giorno.";
+                String message= hallactivity.getString(R.string.MoonStory);
                 StaticLayout.Builder builder=StaticLayout.Builder.obtain(message,0,message.length(), textPaint,700)
                         .setAlignment(Layout.Alignment.ALIGN_NORMAL);
 

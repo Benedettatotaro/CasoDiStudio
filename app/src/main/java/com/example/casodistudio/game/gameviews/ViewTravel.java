@@ -217,7 +217,7 @@ public class ViewTravel extends SurfaceView implements Runnable, SensorEventList
                 int yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;
                 textPaint.setColor(Color.WHITE);
                 textPaint.setTextSize(100);
-                canvas.drawText("Hai perso!", xPos,yPos,textPaint);
+                canvas.drawText( gameActivityPortrait.getString(R.string.GO), xPos,yPos,textPaint);
                 getHolder().unlockCanvasAndPost(canvas);
 
                 return;

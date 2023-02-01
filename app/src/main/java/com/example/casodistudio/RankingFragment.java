@@ -107,7 +107,7 @@ public class RankingFragment extends Fragment {
 
                     }else
                     {
-                        Toast.makeText(getContext(),"unable to fetch data from database",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(),R.string.FetchErr,Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -117,7 +117,7 @@ public class RankingFragment extends Fragment {
 
         }else
         {
-            Toast.makeText(getContext(),"Ranking unavailable, connection missing",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),R.string.ConnRankErr,Toast.LENGTH_SHORT).show();
         }
 
 

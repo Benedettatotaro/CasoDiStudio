@@ -50,10 +50,6 @@ public class LoginFragment extends Fragment {
     private FirebaseAuth auth;
     DocumentReference docRef;
     private Toast toast;
-    private int dbMoonGem;
-    private int dbMarsGem;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

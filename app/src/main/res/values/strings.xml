@@ -32,6 +32,8 @@
     <string name="Name">Name</string>
     <string name="Score">Score</string>
     <string name="Back">Back</string>
+    <string name="FetchErr">"unable to fetch data from database"</string>
+    <string name="ConnRankErr">"Ranking unavailable, connection missing"</string>
 
 
     <!-- Strings related to  Museum-->
@@ -39,7 +41,11 @@
     <string name="Off">"You are playing offline"</string>
     <string name="Guest">"You are a guess"</string>
     <string name="Gemmcap">"You have to collect at least 50 gem to unlock this level"</string>
+    <string name="MoonStory">"During the cold war, between United Sates of America and soviet union, one of many contested goals was the first moon travel with the crew. The 20th of July 1969 three american astronauts started the Apollo 11 spacial mission to land on moon ground the next day. Help the space ship to reach the moon like the crew did that day"</string>
 
+
+    <!-- Strings related to  Travel-->
+    <string name="GO">"Hai perso!"</string>
 
 
     <string name="Failed_update">"update Failed"</string>

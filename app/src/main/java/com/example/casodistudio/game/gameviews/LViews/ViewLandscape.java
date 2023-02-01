@@ -373,7 +373,7 @@ public class ViewLandscape extends SurfaceView implements Runnable {
                 int yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;
                 textPaint.setColor(Color.WHITE);
                 textPaint.setTextSize(100);
-                canvas.drawText("Hai perso!", xPos,yPos,textPaint);
+                canvas.drawText(gameActivityLandscape.getString(R.string.GO), xPos,yPos,textPaint);
                 getHolder().unlockCanvasAndPost(canvas);
 
 
