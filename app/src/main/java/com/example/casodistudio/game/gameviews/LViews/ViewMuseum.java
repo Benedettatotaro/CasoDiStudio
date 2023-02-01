@@ -134,49 +134,13 @@ public class ViewMuseum extends SurfaceView implements Runnable {
             int prova3 = prefs.getInt("flagLevel", -1);
             int prova = prefs.getInt("",0);
 
-        if(prefs.getInt("gameCounter", 0) != 0)// controllo se si sta riferendo al portrait
-            {
-                if(prefs.getInt("flagLevel", -1) == 0 )
-                {
-                    hallactivity.callTravel((short) 0); //passa 0 come flag perché sta andando verso la luna
 
-                }else if(prefs.getInt("flagLevel", -1) == 1 )
-                {
-                    hallactivity.callTravel((short) 1); //passa 0 come flag perché sta andando verso marte
-
-                }
-
-            }
-
-            if(prefs.getInt("xPosition",0) != 0)// o landscape
-            {
-
-                if(prefs.getInt("flagLevel", -1) == 0 ) {
-                    Bundle bundle = new Bundle(1);
-                    bundle.putShort("flagPlanet", (short) 0); //setta il flag nel boundle uguale a 0 o 1
-                    Intent i = new Intent(getContext(), GameActivityLandscape.class);
-                    i.putExtras(bundle);
-                    getContext().startActivity(i);
-                }else if(prefs.getInt("flagLevel", -1) == 1 )
-                {
-                    Bundle bundle=new Bundle(1);
-                    bundle.putShort("flagPlanet", (short) 1); //setta il flag nel boundle uguale a 0 o 1
-                    Intent i = new Intent(getContext(), GameActivityLandscape.class);
-                    i.putExtras(bundle);
-                    getContext().startActivity(i);
-
-                }
-
-            }
 
 
 
 
 
         museum_background = Bitmap.createScaledBitmap(museum_background,screenX,screenY,false); //lo screen x deve essere uguale allo schermo
-
-        //float density = getResources().getDisplayMetrics().density;
-        //setBitmapResolution(density);
 
         isSwitching=false;
 
@@ -303,6 +267,25 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
     }
 
+    public void checkLevelStatus( short flag){
+
+        if(prefs.getInt("gameCounter", 0) != 0)// controllo se si sta riferendo al portrait
+        {
+                hallactivity.callTravel(flag); //passa il flag per chiamare il viaggo
+                return;
+
+        }else if(prefs.getInt("xPosition",0) != 0)// o landscape
+        {
+                Bundle bundle=new Bundle(1);
+                bundle.putShort("flagPlanet", flag); //setta il flag nel boundle per chiamare il pianeta
+                Intent i = new Intent(getContext(), GameActivityLandscape.class);
+                i.putExtras(bundle);
+                getContext().startActivity(i);
+                return;
+        }
+
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
@@ -329,7 +312,11 @@ public class ViewMuseum extends SurfaceView implements Runnable {
 
                 if(event.getX()>distance/2-200-apollo11.getWidth()&&event.getX()<distance/2-200&&event.getY()>0&&event.getY()<apollo11.getHeight()){
 
-                    isSwitching=true;
+                    if(prefs.getInt("flagLevel",-1) == 0 && prefs.getInt("flagLevel",-1) != 1) {
+                        checkLevelStatus((short) 0);
+                    }else {
+                        isSwitching = true;
+                    }
 
                     //quando tocchi sulla teca dell'apollo 11 richiamare l'activity portrait
                 }
@@ -337,9 +324,11 @@ public class ViewMuseum extends SurfaceView implements Runnable {
                 {
                     if( gemTot>= 50)
                     {
-
-                        short c=1; //passa 1 come flag perché sta andando verso Marte
-                        hallactivity.callTravel(c);
+                        if(prefs.getInt("flagLevel",-1) == 1 && prefs.getInt("flagLevel",-1) != 0) {
+                            checkLevelStatus((short) 1);
+                        }else{
+                            hallactivity.callTravel((short)1);
+                        }
 
                     }else
                     {
